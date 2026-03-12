@@ -1,0 +1,311 @@
+{
+    "_readme": [
+        "This file locks the dependencies of your project to a known state",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
+        "This file is @generated automatically"
+    ],
+    "content-hash": "695611c2214571b5acd01b4135edf535",
+    "packages": [
+        {
+            "name": "evilfreelancer/routeros-api-php",
+            "version": "1.6.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/EvilFreelancer/routeros-api-php.git",
+                "reference": "dd7bf44c461054c0101119154de21f8c8b8f4512"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/EvilFreelancer/routeros-api-php/zipball/dd7bf44c461054c0101119154de21f8c8b8f4512",
+                "reference": "dd7bf44c461054c0101119154de21f8c8b8f4512",
+                "shasum": ""
+            },
+            "require": {
+                "ext-sockets": "*",
+                "php": "^7.4|^8.0",
+                "spatie/ssh": "^1.8"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "^2.16",
+                "larapack/dd": "^1.1",
+                "limedeck/phpunit-detailed-printer": "^5.0",
+                "orchestra/testbench": "^4.0|^5.0",
+                "phpunit/phpunit": "^8.0",
+                "rector/rector": "^0.7|^0.8|^0.9",
+                "roave/security-advisories": "dev-master",
+                "squizlabs/php_codesniffer": "^3.5"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "aliases": {
+                        "RouterOS": "RouterOS\\Laravel\\Facade"
+                    },
+                    "providers": [
+                        "RouterOS\\Laravel\\ServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "RouterOS\\": "./src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Paul Rock",
+                    "email": "paul@drteam.rocks",
+                    "homepage": "http://drteam.rocks/",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Modern Mikrotik RouterOS API PHP client for your applications (with Laravel support)",
+            "keywords": [
+                "PSR-4",
+                "facade",
+                "laravel",
+                "mikrotik",
+                "plugin",
+                "routeros",
+                "socket-client"
+            ],
+            "support": {
+                "issues": "https://github.com/EvilFreelancer/routeros-api-php/issues",
+                "source": "https://github.com/EvilFreelancer/routeros-api-php/tree/1.6.0"
+            },
+            "funding": [
+                {
+                    "url": "https://boosty.to/evilfreelancer",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://pay.cloudtips.ru/p/937f48ac",
+                    "type": "custom"
+                }
+            ],
+            "time": "2025-09-15T10:19:30+00:00"
+        },
+        {
+            "name": "spatie/ssh",
+            "version": "1.13.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/spatie/ssh.git",
+                "reference": "3d2444f72d2c6ec4d12a8d2f03e0b6f5a06114e1"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/spatie/ssh/zipball/3d2444f72d2c6ec4d12a8d2f03e0b6f5a06114e1",
+                "reference": "3d2444f72d2c6ec4d12a8d2f03e0b6f5a06114e1",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^7.4|^8.0",
+                "symfony/process": "^4.4|^5.3|^6.0|^7.0|^8.0"
+            },
+            "require-dev": {
+                "pestphp/pest": "^1.22",
+                "spatie/pest-plugin-snapshots": "^1.1",
+                "symfony/var-dumper": "^5.3|^6.0|^7.0|^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Spatie\\Ssh\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Freek Van der Herten",
+                    "email": "freek@spatie.be",
+                    "homepage": "https://spatie.be",
+                    "role": "Developer"
+                }
+            ],
+            "description": "A lightweight package to execute commands over an SSH connection",
+            "homepage": "https://github.com/spatie/ssh",
+            "keywords": [
+                "spatie",
+                "ssh"
+            ],
+            "support": {
+                "issues": "https://github.com/spatie/ssh/issues",
+                "source": "https://github.com/spatie/ssh/tree/1.13.1"
+            },
+            "funding": [
+                {
+                    "url": "https://spatie.be/open-source/support-us",
+                    "type": "custom"
+                }
+            ],
+            "time": "2025-11-23T11:35:56+00:00"
+        },
+        {
+            "name": "symfony/polyfill-php80",
+            "version": "v1.33.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/polyfill-php80.git",
+                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
+                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2"
+            },
+            "type": "library",
+            "extra": {
+                "thanks": {
+                    "url": "https://github.com/symfony/polyfill",
+                    "name": "symfony/polyfill"
+                }
+            },
+            "autoload": {
+                "files": [
+                    "bootstrap.php"
+                ],
+                "psr-4": {
+                    "Symfony\\Polyfill\\Php80\\": ""
+                },
+                "classmap": [
+                    "Resources/stubs"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Ion Bazan",
+                    "email": "ion.bazan@gmail.com"
+                },
+                {
+                    "name": "Nicolas Grekas",
+                    "email": "p@tchwork.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
+            "homepage": "https://symfony.com",
+            "keywords": [
+                "compatibility",
+                "polyfill",
+                "portable",
+                "shim"
+            ],
+            "support": {
+                "source": "https://github.com/symfony/polyfill-php80/tree/v1.33.0"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2025-01-02T08:10:11+00:00"
+        },
+        {
+            "name": "symfony/process",
+            "version": "v5.4.51",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/process.git",
+                "reference": "467bfc56f18f5ef6d5ccb09324d7e988c1c0a98f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/process/zipball/467bfc56f18f5ef6d5ccb09324d7e988c1c0a98f",
+                "reference": "467bfc56f18f5ef6d5ccb09324d7e988c1c0a98f",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.2.5",
+                "symfony/polyfill-php80": "^1.16"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Symfony\\Component\\Process\\": ""
+                },
+                "exclude-from-classmap": [
+                    "/Tests/"
+                ]
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Fabien Potencier",
+                    "email": "fabien@symfony.com"
+                },
+                {
+                    "name": "Symfony Community",
+                    "homepage": "https://symfony.com/contributors"
+                }
+            ],
+            "description": "Executes commands in sub-processes",
+            "homepage": "https://symfony.com",
+            "support": {
+                "source": "https://github.com/symfony/process/tree/v5.4.51"
+            },
+            "funding": [
+                {
+                    "url": "https://symfony.com/sponsor",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/fabpot",
+                    "type": "github"
+                },
+                {
+                    "url": "https://github.com/nicolas-grekas",
+                    "type": "github"
+                },
+                {
+                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
+                    "type": "tidelift"
+                }
+            ],
+            "time": "2026-01-26T15:53:37+00:00"
+        }
+    ],
+    "packages-dev": [],
+    "aliases": [],
+    "minimum-stability": "stable",
+    "stability-flags": {},
+    "prefer-stable": false,
+    "prefer-lowest": false,
+    "platform": {},
+    "platform-dev": {},
+    "plugin-api-version": "2.9.0"
+}
