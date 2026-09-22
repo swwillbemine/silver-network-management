@@ -12,13 +12,11 @@ $user_role = $_SESSION['user_role'] ?? '';
     </button>
 
     <div class="brand-container d-flex align-items-center justify-content-between w-100">
-      <h1 class="navbar-brand m-0 p-0 text-start flex-shrink-0">
-        <a href="<?= BASE_URL ?>/" class="text-decoration-none text-reset d-flex flex-column justify-content-center">
-          <div class="brand-title"><?php echo $isp_name ?? 'SilverNet'; ?></div>
-          <div class="brand-subtitle">Silver Network Management</div>
-        </a>
-      </h1>
-      <a class="d-none d-lg-flex flex-shrink-0" id="sidebar-toggle" title="Toggle Sidebar" style="cursor: pointer; margin-right: 0 !important; width: 24px; justify-content: center; padding: 0 !important; border: none !important;">
+      <div class="navbar-brand m-0 p-0 text-start d-flex flex-column justify-content-center align-items-start text-start" style="cursor: default !important; user-select: none; pointer-events: none;">
+        <div class="brand-title"><?php echo $isp_name ?? 'SilverNet'; ?></div>
+        <div class="brand-subtitle">Silver Network Management</div>
+      </div>
+      <a class="d-none d-lg-flex flex-shrink-0" id="sidebar-toggle" title="Toggle Sidebar" style="cursor: pointer; pointer-events: auto;">
           <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="9" y1="4" x2="9" y2="20" /></svg>
       </a>
     </div>

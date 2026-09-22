@@ -338,6 +338,7 @@ const connections = <?= json_encode($connections) ?>;
 
 // Init topology map
 const tmap = L.map('topology-map', {maxZoom:22}).setView([-7.02580113, 112.47867107], 14);
+window.tmap = tmap;
 snmInitControls(tmap, 'topology-map-wrap');
 
 const nodeMap = {};
@@ -370,6 +371,21 @@ const allWithCoords = nodes.filter(n => n.latitude && n.longitude);
 if (allWithCoords.length) {
   tmap.fitBounds(allWithCoords.map(n => [n.latitude, n.longitude]), {padding: [30, 30]});
 }
+
+function invalidateTopologyMap() {
+  if (typeof tmap !== 'undefined' && tmap) {
+    tmap.invalidateSize();
+  }
+}
+document.addEventListener('sidebar-toggle', function() {
+  setTimeout(invalidateTopologyMap, 50);
+  setTimeout(invalidateTopologyMap, 150);
+  setTimeout(invalidateTopologyMap, 300);
+});
+window.addEventListener('resize', function() {
+  setTimeout(invalidateTopologyMap, 100);
+});
+setTimeout(invalidateTopologyMap, 200);
 
 function toggleFields() {
   const t = document.getElementById('f-type').value;

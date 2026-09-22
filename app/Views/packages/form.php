@@ -310,8 +310,8 @@ $v = function(string $field, $default='') use ($pkg,$is_edit): string {
 
           <!-- ── ACTION BUTTONS ──────────────────────────────────── -->
           <div class="d-flex gap-2 justify-content-end align-items-center mb-4">
-            <a href="<?= BASE_URL ?>/packages" class="btn btn-ghost-secondary btn-sm">Batal</a>
-            <button type="submit" class="btn btn-primary btn-sm">
+            <a href="<?= BASE_URL ?>/packages" class="btn btn-ghost-secondary btn-md">Batal</a>
+            <button type="submit" class="btn btn-primary btn-md">
               <svg xmlns="http://www.w3.org/2000/svg" class="icon icon-sm" width="16" height="16" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><path d="M17 21v-8H7v8M7 3v5h8"/></svg>
               <?= $is_edit ? 'Simpan Perubahan' : 'Tambah Paket' ?> &amp; Push MikroTik
             </button>

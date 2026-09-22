@@ -20,15 +20,13 @@ class CustomerRepository
     public function all(array $filters = []): array
     {
         $sql = "SELECT c.*, 
-                       p.name AS package_name, p.price AS package_price, p.rate_limit,
+                       p.name AS package_name, p.price AS package_price,
                        n.name AS node_name, 
-                       po.name AS pop_name,
-                       m.name AS router_name, m.ip_address AS router_ip
+                       m.name AS router_name, m.host AS router_ip
                 FROM customers c
                 LEFT JOIN packages p ON p.id = c.package_id
                 LEFT JOIN nodes n ON n.id = c.node_id
-                LEFT JOIN pops po ON po.id = c.pop_id
-                LEFT JOIN mikrotiks m ON m.id = c.router_id
+                LEFT JOIN mikrotiks m ON m.id = p.mikrotik_id
                 WHERE 1=1";
 
         $params = [];
@@ -44,7 +42,7 @@ class CustomerRepository
         }
 
         if (!empty($filters['router_id'])) {
-            $sql .= " AND c.router_id = ?";
+            $sql .= " AND p.mikrotik_id = ?";
             $params[] = (int)$filters['router_id'];
         }
 
@@ -54,7 +52,7 @@ class CustomerRepository
         }
 
         if (!empty($filters['search'])) {
-            $sql .= " AND (c.name LIKE ? OR c.username LIKE ? OR c.customer_number LIKE ? OR c.phone LIKE ?)";
+            $sql .= " AND (c.name LIKE ? OR c.pppoe_username LIKE ? OR c.customer_number LIKE ? OR c.phone LIKE ?)";
             $q = '%' . $filters['search'] . '%';
             $params[] = $q;
             $params[] = $q;
@@ -77,7 +75,7 @@ class CustomerRepository
 
     public function count(array $filters = []): int
     {
-        $sql = "SELECT COUNT(*) FROM customers c WHERE 1=1";
+        $sql = "SELECT COUNT(*) FROM customers c LEFT JOIN packages p ON p.id = c.package_id WHERE 1=1";
         $params = [];
 
         if (!empty($filters['status'])) {
@@ -91,12 +89,12 @@ class CustomerRepository
         }
 
         if (!empty($filters['router_id'])) {
-            $sql .= " AND c.router_id = ?";
+            $sql .= " AND p.mikrotik_id = ?";
             $params[] = (int)$filters['router_id'];
         }
 
         if (!empty($filters['search'])) {
-            $sql .= " AND (c.name LIKE ? OR c.username LIKE ? OR c.customer_number LIKE ? OR c.phone LIKE ?)";
+            $sql .= " AND (c.name LIKE ? OR c.pppoe_username LIKE ? OR c.customer_number LIKE ? OR c.phone LIKE ?)";
             $q = '%' . $filters['search'] . '%';
             $params[] = $q;
             $params[] = $q;
@@ -112,15 +110,13 @@ class CustomerRepository
     public function find(int $id): ?array
     {
         $sql = "SELECT c.*, 
-                       p.name AS package_name, p.price AS package_price, p.rate_limit,
+                       p.name AS package_name, p.price AS package_price,
                        n.name AS node_name, 
-                       po.name AS pop_name,
-                       m.name AS router_name, m.ip_address AS router_ip, m.username AS router_user, m.password AS router_pass, m.port AS router_port
+                       m.name AS router_name, m.host AS router_ip, m.username AS router_user, m.password AS router_pass, m.port AS router_port
                 FROM customers c
                 LEFT JOIN packages p ON p.id = c.package_id
                 LEFT JOIN nodes n ON n.id = c.node_id
-                LEFT JOIN pops po ON po.id = c.pop_id
-                LEFT JOIN mikrotiks m ON m.id = c.router_id
+                LEFT JOIN mikrotiks m ON m.id = p.mikrotik_id
                 WHERE c.id = ? LIMIT 1";
 
         $stmt = $this->pdo->prepare($sql);
@@ -130,7 +126,7 @@ class CustomerRepository
 
     public function findByUsername(string $username): ?array
     {
-        $stmt = $this->pdo->prepare("SELECT * FROM customers WHERE username = ? LIMIT 1");
+        $stmt = $this->pdo->prepare("SELECT * FROM customers WHERE pppoe_username = ? LIMIT 1");
         $stmt->execute([$username]);
         return $stmt->fetch(PDO::FETCH_ASSOC) ?: null;
     }

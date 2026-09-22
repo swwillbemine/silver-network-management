@@ -130,82 +130,104 @@ class DashboardService
                 'traffic_tx_fmt' => '0 B',
             ];
 
-            $conn = Connection::fromRouter($router);
-            if ($conn->isConnected()) {
-                $totalRoutersOnline++;
-                $r['status'] = 'online';
+            try {
+                $conn = Connection::fromRouter($router);
+                if ($conn->isConnected()) {
+                    $totalRoutersOnline++;
+                    $r['status'] = 'online';
 
-                $res = $conn->query('/system/resource', 'print');
-                if (!empty($res[0])) {
-                    $sr = $res[0];
-                    $r['uptime']  = $sr['uptime'] ?? '-';
-                    $r['version'] = $sr['version'] ?? '-';
-                    $r['cpu']     = (int)($sr['cpu-load'] ?? 0);
-                    $totalMem     = (int)($sr['total-memory'] ?? 1);
-                    $freeMem      = (int)($sr['free-memory'] ?? 0);
-                    $r['ram']     = round((($totalMem - $freeMem) / $totalMem) * 100);
-                }
-
-                $rb = $conn->query('/system/routerboard', 'print');
-                if (!empty($rb[0])) {
-                    $r['model'] = $rb[0]['model'] ?? ($rb[0]['board-name'] ?? '-');
-                }
-
-                $ident = $conn->query('/system/identity', 'print');
-                if (!empty($ident[0])) {
-                    $r['identity'] = $ident[0]['name'] ?? '-';
-                }
-
-                $activePpp = $conn->query('/ppp/active', 'print');
-                $r['ppp_active'] = count($activePpp);
-                $globalPppActive += $r['ppp_active'];
-
-                $allIfaces = $conn->query('/interface', 'print');
-                $trafficRx = 0; $trafficTx = 0;
-                $uplink = null;
-
-                foreach ($allIfaces as $iface) {
-                    if (($iface['disabled'] ?? 'false') === 'true') continue;
-                    $rxBytes = (int)($iface['rx-byte'] ?? 0);
-                    $txBytes = (int)($iface['tx-byte'] ?? 0);
-                    $ifName  = $iface['name'] ?? '';
-
-                    $isUplink = (!empty($iface['comment']) && stripos($iface['comment'], 'uplink') !== false)
-                             || stripos($ifName, 'ether1') !== false
-                             || stripos($ifName, 'sfp') !== false;
-
-                    if ($isUplink && $uplink === null) {
-                        $uplink = ['name' => $ifName, 'rx' => $rxBytes, 'tx' => $txBytes];
+                    $res = $conn->query('/system/resource', 'print');
+                    if (!empty($res[0])) {
+                        $sr = $res[0];
+                        $r['uptime']  = $sr['uptime'] ?? '-';
+                        $r['version'] = $sr['version'] ?? '-';
+                        $r['cpu']     = (int)($sr['cpu-load'] ?? 0);
+                        $totalMem     = max(1, (int)($sr['total-memory'] ?? 1));
+                        $freeMem      = (int)($sr['free-memory'] ?? 0);
+                        $r['ram']     = round((($totalMem - $freeMem) / $totalMem) * 100);
                     }
 
-                    $r['interfaces'][] = [
-                        'name'    => $ifName,
-                        'type'    => $iface['type'] ?? '',
-                        'running' => ($iface['running'] ?? 'false') === 'true',
-                        'comment' => $iface['comment'] ?? '',
-                        'rx'      => \App\Helpers\Utility::formatBytes($rxBytes),
-                        'tx'      => \App\Helpers\Utility::formatBytes($txBytes),
-                        'rx_fmt'  => \App\Helpers\Utility::formatBytes($rxBytes),
-                        'tx_fmt'  => \App\Helpers\Utility::formatBytes($txBytes),
-                    ];
-                }
+                    $rb = $conn->query('/system/routerboard', 'print');
+                    if (!empty($rb[0])) {
+                        $r['model'] = $rb[0]['model'] ?? ($rb[0]['board-name'] ?? '-');
+                    }
 
-                if ($uplink) {
-                    $trafficRx = $uplink['rx'];
-                    $trafficTx = $uplink['tx'];
-                    $globalTrafficRx += $trafficRx;
-                    $globalTrafficTx += $trafficTx;
-                    $trafficSources[] = $router['name'] . ' (' . $uplink['name'] . ')';
-                }
+                    $ident = $conn->query('/system/identity', 'print');
+                    if (!empty($ident[0])) {
+                        $r['identity'] = $ident[0]['name'] ?? '-';
+                    }
 
-                $r['traffic_rx']     = $trafficRx;
-                $r['traffic_tx']     = $trafficTx;
-                $r['traffic_rx_fmt'] = \App\Helpers\Utility::formatBytes($trafficRx);
-                $r['traffic_tx_fmt'] = \App\Helpers\Utility::formatBytes($trafficTx);
-                $r['interfaces']     = array_slice($r['interfaces'], 0, 6);
+                    $activePpp = $conn->query('/ppp/active', 'print');
+                    $r['ppp_active'] = count($activePpp);
+                    $globalPppActive += $r['ppp_active'];
+
+                    $allIfaces = $conn->query('/interface', 'print');
+                    $trafficRx = 0; $trafficTx = 0;
+                    $uplink = null;
+
+                    foreach ($allIfaces as $iface) {
+                        if (($iface['disabled'] ?? 'false') === 'true') continue;
+                        $rxBytes = (int)($iface['rx-byte'] ?? 0);
+                        $txBytes = (int)($iface['tx-byte'] ?? 0);
+                        $ifName  = $iface['name'] ?? '';
+
+                        $isUplink = (!empty($iface['comment']) && stripos($iface['comment'], 'uplink') !== false)
+                                 || stripos($ifName, 'ether1') !== false
+                                 || stripos($ifName, 'sfp') !== false;
+
+                        if ($isUplink && $uplink === null) {
+                            $uplink = ['name' => $ifName, 'rx' => $rxBytes, 'tx' => $txBytes];
+                        }
+
+                        $r['interfaces'][] = [
+                            'name'    => $ifName,
+                            'type'    => $iface['type'] ?? '',
+                            'running' => ($iface['running'] ?? 'false') === 'true',
+                            'comment' => $iface['comment'] ?? '',
+                            'rx'      => \App\Helpers\Utility::formatBytes($rxBytes),
+                            'tx'      => \App\Helpers\Utility::formatBytes($txBytes),
+                            'rx_fmt'  => \App\Helpers\Utility::formatBytes($rxBytes),
+                            'tx_fmt'  => \App\Helpers\Utility::formatBytes($txBytes),
+                        ];
+                    }
+
+                    if ($uplink) {
+                        $trafficRx = $uplink['rx'];
+                        $trafficTx = $uplink['tx'];
+                        $globalTrafficRx += $trafficRx;
+                        $globalTrafficTx += $trafficTx;
+                        $trafficSources[] = $router['name'] . ' (' . $uplink['name'] . ')';
+                    }
+
+                    $r['traffic_rx']     = $trafficRx;
+                    $r['traffic_tx']     = $trafficTx;
+                    $r['traffic_rx_fmt'] = \App\Helpers\Utility::formatBytes($trafficRx);
+                    $r['traffic_tx_fmt'] = \App\Helpers\Utility::formatBytes($trafficTx);
+                    $r['interfaces']     = array_slice($r['interfaces'], 0, 6);
+                }
+            } catch (\Throwable $re) {
+                $r['status'] = 'offline';
             }
 
             $routersData[] = $r;
+        }
+
+        // --- Customer Growth for Chart ---
+        $currentYear = (int)date('Y');
+        $customerGrowth = [];
+        $growthLabels = [];
+        for ($m = 1; $m <= 12; $m++) {
+            $monthStr = str_pad((string)$m, 2, '0', STR_PAD_LEFT);
+            $dateLimit = "{$currentYear}-{$monthStr}-31 23:59:59";
+            
+            // Count total active customers up to the end of that month
+            $stmt = $this->pdo->prepare("SELECT COUNT(*) FROM customers WHERE status = 'active' AND (installation_date <= ? OR installation_date IS NULL)");
+            $stmt->execute([$dateLimit]);
+            $count = (int)$stmt->fetchColumn();
+            
+            $customerGrowth[] = $count;
+            $monthName = date('M', mktime(0, 0, 0, $m, 10)); // Jan, Feb, etc
+            $growthLabels[] = $monthName;
         }
 
         return [
@@ -223,6 +245,10 @@ class DashboardService
                 'online_mikrotiks' => $totalRoutersOnline,
                 'hotspots'         => (int)$cntHotspots,
                 'nodes'            => (int)$cntNodes,
+            ],
+            'chart_data' => [
+                'customer_growth' => $customerGrowth,
+                'customer_labels' => $growthLabels,
             ],
             'routers_detail' => $routersData,
             'updated_at'     => date('H:i:s'),

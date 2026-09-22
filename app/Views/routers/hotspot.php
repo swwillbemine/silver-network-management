@@ -269,6 +269,7 @@ function snmInitControls(map, containerId, defaultMode) {
 </script>
 <script>
 const hsMap = L.map('hs-map', {maxZoom:22}).setView([-7.02580113, 112.47867107], 14);
+window.hsMap = hsMap;
 snmInitControls(hsMap, 'hs-map-wrap');
 
 const hsData = <?= json_encode(array_filter($hotspots, fn($h) => $h['latitude'] && $h['longitude'])) ?>;
@@ -281,6 +282,21 @@ Object.values(hsData).forEach(h => {
 
 const withCoords = Object.values(hsData);
 if (withCoords.length) hsMap.fitBounds(withCoords.map(h => [h.latitude, h.longitude]), {padding:[30,30]});
+
+function invalidateHotspotMap() {
+  if (typeof hsMap !== 'undefined' && hsMap) {
+    hsMap.invalidateSize();
+  }
+}
+document.addEventListener('sidebar-toggle', function() {
+  setTimeout(invalidateHotspotMap, 50);
+  setTimeout(invalidateHotspotMap, 150);
+  setTimeout(invalidateHotspotMap, 300);
+});
+window.addEventListener('resize', function() {
+  setTimeout(invalidateHotspotMap, 100);
+});
+setTimeout(invalidateHotspotMap, 200);
 
 function editHs(h) {
   document.getElementById('form-action').value = 'update';

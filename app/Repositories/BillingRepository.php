@@ -20,18 +20,22 @@ class BillingRepository
     public function all(array $filters = [], int $limit = 25, int $offset = 0): array
     {
         $sql = "SELECT b.*, 
-                       c.name AS cust_name, c.customer_number, c.phone, c.address, c.pppoe_username,
+                       c.name AS cust_name, c.customer_number, c.phone, c.pppoe_username,
                        pk.name AS pkg_name, c.discount AS cust_discount, pk.price AS pkg_price,
                        n.name AS node_name, n.address AS node_address,
                        po.name AS pop_name,
                        py.method, py.amount_paid, py.notes AS pay_notes
                 FROM billings b
-                JOIN customers c ON c.id = b.customer_id
-                JOIN packages pk ON pk.id = c.package_id
-                JOIN mikrotiks mk ON mk.id = pk.mikrotik_id
-                JOIN pops po ON po.id = mk.pop_id
-                JOIN nodes n ON n.id = c.node_id
-                LEFT JOIN payments py ON py.billing_id = b.id
+                LEFT JOIN customers c ON c.id = b.customer_id
+                LEFT JOIN packages pk ON pk.id = c.package_id
+                LEFT JOIN mikrotiks mk ON mk.id = pk.mikrotik_id
+                LEFT JOIN pops po ON po.id = mk.pop_id
+                LEFT JOIN nodes n ON n.id = c.node_id
+                LEFT JOIN (
+                    SELECT billing_id, method, amount_paid, notes
+                    FROM payments
+                    WHERE id IN (SELECT MAX(id) FROM payments GROUP BY billing_id)
+                ) py ON py.billing_id = b.id
                 WHERE 1=1";
 
         $params = [];
@@ -62,12 +66,6 @@ class BillingRepository
     {
         $sql = "SELECT COUNT(*) 
                 FROM billings b
-                JOIN customers c ON c.id = b.customer_id
-                JOIN packages pk ON pk.id = c.package_id
-                JOIN mikrotiks mk ON mk.id = pk.mikrotik_id
-                JOIN pops po ON po.id = mk.pop_id
-                JOIN nodes n ON n.id = c.node_id
-                LEFT JOIN payments py ON py.billing_id = b.id
                 WHERE 1=1";
 
         $params = [];
@@ -95,18 +93,22 @@ class BillingRepository
     public function find(int $id): ?array
     {
         $sql = "SELECT b.*, 
-                       c.name AS cust_name, c.customer_number, c.phone, c.address, c.pppoe_username,
+                       c.name AS cust_name, c.customer_number, c.phone, c.pppoe_username,
                        pk.name AS pkg_name, c.discount AS cust_discount, pk.price AS pkg_price,
                        n.name AS node_name, n.address AS node_address,
                        po.name AS pop_name,
                        py.method, py.amount_paid, py.notes AS pay_notes
                 FROM billings b
-                JOIN customers c ON c.id = b.customer_id
-                JOIN packages pk ON pk.id = c.package_id
-                JOIN mikrotiks mk ON mk.id = pk.mikrotik_id
-                JOIN pops po ON po.id = mk.pop_id
-                JOIN nodes n ON n.id = c.node_id
-                LEFT JOIN payments py ON py.billing_id = b.id
+                LEFT JOIN customers c ON c.id = b.customer_id
+                LEFT JOIN packages pk ON pk.id = c.package_id
+                LEFT JOIN mikrotiks mk ON mk.id = pk.mikrotik_id
+                LEFT JOIN pops po ON po.id = mk.pop_id
+                LEFT JOIN nodes n ON n.id = c.node_id
+                LEFT JOIN (
+                    SELECT billing_id, method, amount_paid, notes
+                    FROM payments
+                    WHERE id IN (SELECT MAX(id) FROM payments GROUP BY billing_id)
+                ) py ON py.billing_id = b.id
                 WHERE b.id = ? LIMIT 1";
 
         $stmt = $this->pdo->prepare($sql);
@@ -184,13 +186,19 @@ class BillingRepository
 
     public function getSummary(string $period): array
     {
-        $summary = $this->pdo->prepare("SELECT status, COUNT(*) AS cnt, SUM(amount) AS total FROM billings WHERE period=? GROUP BY status");
+        $summary = $this->pdo->prepare("SELECT status, COUNT(*) AS cnt, COALESCE(SUM(amount), 0) AS total FROM billings WHERE period=? GROUP BY status");
         $summary->execute([$period]);
-        $stats = [];
+        $stats = [
+            'unpaid'    => ['cnt' => 0, 'total' => 0],
+            'paid'      => ['cnt' => 0, 'total' => 0],
+            'cancelled' => ['cnt' => 0, 'total' => 0],
+        ];
         foreach ($summary->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $stats[$row['status']] = $row;
+            $stats[$row['status']] = [
+                'cnt'   => (int)$row['cnt'],
+                'total' => (float)$row['total'],
+            ];
         }
         return $stats;
     }
 }
-

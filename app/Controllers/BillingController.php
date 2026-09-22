@@ -37,25 +37,29 @@ class BillingController
         $msg = '';
 
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-            $action = $_POST['action'] ?? '';
+            try {
+                $action = $_POST['action'] ?? '';
 
-            if ($action === 'generate') {
-                $period = $_POST['period'] ?? date('Y-m');
-                $cnt = $this->billingService->generateMonthlyBills($period);
-                $msg = "success:Berhasil membuat $cnt tagihan untuk periode $period.";
-            } elseif ($action === 'pay') {
-                $billingId = (int)($_POST['billing_id'] ?? 0);
-                $amountPaid = (float)($_POST['amount_paid'] ?? 0);
-                $method = $_POST['method'] ?? 'cash';
-                $notes = $_POST['notes'] ?? '';
-                $userId = (int)($_SESSION['user_id'] ?? 0);
+                if ($action === 'generate') {
+                    $period = $_POST['period'] ?? date('Y-m');
+                    $cnt = $this->billingService->generateMonthlyBills($period);
+                    $msg = "success:Berhasil membuat $cnt tagihan untuk periode $period.";
+                } elseif ($action === 'pay') {
+                    $billingId = (int)($_POST['billing_id'] ?? 0);
+                    $amountPaid = (float)($_POST['amount_paid'] ?? 0);
+                    $method = $_POST['method'] ?? 'cash';
+                    $notes = $_POST['notes'] ?? '';
+                    $userId = (int)($_SESSION['user_id'] ?? 0);
 
-                $this->billingService->recordPayment($billingId, $amountPaid, $method, $notes, $userId);
-                $msg = 'success:Pembayaran berhasil dicatat.';
-            } elseif ($action === 'cancel') {
-                $billingId = (int)($_POST['billing_id'] ?? 0);
-                $this->billingService->cancelBill($billingId);
-                $msg = 'success:Tagihan dibatalkan.';
+                    $this->billingService->recordPayment($billingId, $amountPaid, $method, $notes, $userId);
+                    $msg = 'success:Pembayaran berhasil dicatat.';
+                } elseif ($action === 'cancel') {
+                    $billingId = (int)($_POST['billing_id'] ?? 0);
+                    $this->billingService->cancelBill($billingId);
+                    $msg = 'success:Tagihan dibatalkan.';
+                }
+            } catch (\Throwable $e) {
+                $msg = 'danger:Terjadi kesalahan: ' . $e->getMessage();
             }
         }
 
@@ -72,13 +76,25 @@ class BillingController
         $page     = max(1, (int)($_GET['page'] ?? 1));
         $offset   = ($page - 1) * $per_page;
 
-        $total_rows  = $this->billingRepo->count($filters);
-        $total_pages = max(1, (int)ceil($total_rows / $per_page));
-        $page        = min($page, $total_pages);
-        $offset      = ($page - 1) * $per_page;
+        try {
+            $total_rows  = $this->billingRepo->count($filters);
+            $total_pages = max(1, (int)ceil($total_rows / $per_page));
+            $page        = min($page, $total_pages);
+            $offset      = ($page - 1) * $per_page;
 
-        $billings = $this->billingRepo->all($filters, $per_page, $offset);
-        $stats = $this->billingRepo->getSummary($period_filter);
+            $billings = $this->billingRepo->all($filters, $per_page, $offset);
+            $stats = $this->billingRepo->getSummary($period_filter);
+        } catch (\Throwable $e) {
+            $total_rows  = 0;
+            $total_pages = 1;
+            $billings    = [];
+            $stats       = [
+                'unpaid'    => ['cnt' => 0, 'total' => 0],
+                'paid'      => ['cnt' => 0, 'total' => 0],
+                'cancelled' => ['cnt' => 0, 'total' => 0],
+            ];
+            $msg = 'danger:Gagal memuat data tagihan: ' . $e->getMessage();
+        }
 
         [$msg_type, $msg_text] = $msg ? explode(':', $msg, 2) : ['', ''];
 
@@ -117,6 +133,8 @@ class BillingController
             'total_pages'     => $total_pages,
             'page'            => $page,
             'per_page'        => $per_page,
+            'offset'          => $offset,
+            'title'           => 'Tagihan',
             'msg'             => $msg,
             'msg_type'        => $msg_type,
             'msg_text'        => $msg_text,
@@ -132,4 +150,3 @@ class BillingController
         ]);
     }
 }
-

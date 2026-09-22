@@ -1,13 +1,16 @@
 <?php
 // layout/header.php
 if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstrap.php';
+
+$page_title = !empty($title) ? htmlspecialchars($title) . ' - ' . htmlspecialchars($GLOBALS['app_name'] ?? 'SilverNet') : htmlspecialchars($full_title ?? $GLOBALS['full_title'] ?? 'Silver Network Management');
+$header_isp_name = htmlspecialchars($isp_name ?? $GLOBALS['isp_name'] ?? 'SilverNet');
 ?>
 <!doctype html>
 <html lang="id">
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
-    <title><?php echo $full_title; ?></title>
+    <title><?php echo $page_title; ?></title>
     <link href="https://cdn.jsdelivr.net/npm/@tabler/core@1.0.0/dist/css/tabler.min.css" rel="stylesheet"/>
     <link href="https://cdn.jsdelivr.net/npm/tom-select@2.3.1/dist/css/tom-select.bootstrap5.min.css" rel="stylesheet"/>
     <link rel="icon" type="image/x-icon" href="<?= BASE_URL ?>/favicon.ico">
@@ -44,11 +47,19 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
       [data-bs-theme="dark"] .ts-dropdown input { background: #1e2635 !important; color: #c8d3e1 !important; }
 
       /* Custom UI Improvements */
-      :root {
-        --tblr-border-radius: 0.75rem;
+      :root,
+      [data-bs-theme="light"],
+      [data-bs-theme="dark"],
+      body {
+        --tblr-border-radius: 4px;
+        --tblr-btn-border-radius: 4px;
+      }
+      .btn {
+        --tblr-btn-border-radius: 4px !important;
+        border-radius: 4px;
       }
       .card {
-        border-radius: var(--tblr-border-radius);
+        border-radius: 0.75rem !important;
         border: 1px solid rgba(0, 0, 0, 0.05);
         box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
         transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
@@ -58,6 +69,7 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
         box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.04);
       }
       [data-bs-theme="dark"] .card {
+        border-radius: 0.75rem !important;
         border: 1px solid rgba(255, 255, 255, 0.05);
         background-color: #1a2230;
       }
@@ -72,39 +84,96 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
       
       /* Sidebar Collapse styles for Desktop */
       @media (min-width: 992px) {
-        .navbar-vertical {
-          overflow-x: hidden;
-          transition: width 0.3s ease !important;
-        }
-
-        /* ========================================================= */
-        /* PERFECT SIDEBAR ALIGNMENT & ANIMATION FIX                 */
-        /* ========================================================= */
-
         /* 1. Global Dimensions & Transitions */
         .navbar-vertical {
           width: 224px !important;
-          transition: width 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+          min-width: 224px;
+          max-width: 224px;
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          bottom: 0 !important;
+          z-index: 1030 !important;
+          transform: translateX(0) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          pointer-events: auto !important;
+          transition: width 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
           overflow: hidden !important;
           display: flex !important;
           flex-direction: column !important;
         }
+
         body.sidebar-collapsed .navbar-vertical {
           width: 72px !important;
+          min-width: 72px !important;
+          max-width: 72px !important;
+          transform: translateX(0) !important;
+          opacity: 1 !important;
+          visibility: visible !important;
+          pointer-events: auto !important;
         }
-        .page-wrapper,
-        .page > header.navbar {
+
+        /* Topbar Header: aligns with sidebar when open, full width when collapsed */
+        .page > header.navbar,
+        .navbar-vertical ~ .navbar,
+        .navbar-expand-lg.navbar-vertical ~ .navbar {
           margin-left: 224px !important;
           width: calc(100% - 224px) !important;
           max-width: calc(100% - 224px) !important;
           min-width: 0 !important;
-          transition: margin-left 280ms cubic-bezier(0.4, 0, 0.2, 1), width 280ms cubic-bezier(0.4, 0, 0.2, 1), max-width 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+          transition: margin-left 380ms cubic-bezier(0.25, 1, 0.5, 1), width 380ms cubic-bezier(0.25, 1, 0.5, 1), max-width 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
         }
-        body.sidebar-collapsed .page-wrapper,
-        body.sidebar-collapsed .page > header.navbar {
+
+        body.sidebar-collapsed .page > header.navbar,
+        body.sidebar-collapsed .navbar-vertical ~ .navbar,
+        body.sidebar-collapsed .navbar-expand-lg.navbar-vertical ~ .navbar {
           margin-left: 72px !important;
           width: calc(100% - 72px) !important;
           max-width: calc(100% - 72px) !important;
+        }
+
+        /* Main Content Wrapper: margin-left offset ONLY, width: auto prevents conflict & overflow */
+        .page-wrapper,
+        .navbar-vertical ~ .page-wrapper,
+        .navbar-expand-lg.navbar-vertical ~ .page-wrapper,
+        .navbar-expand-xl.navbar-vertical ~ .page-wrapper,
+        .navbar-expand-xxl.navbar-vertical ~ .page-wrapper,
+        .navbar-expand.navbar-vertical ~ .page-wrapper {
+          margin-left: 224px !important;
+          width: auto !important;
+          max-width: 100% !important;
+          min-width: 0 !important;
+          transition: margin-left 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+
+        body.sidebar-collapsed .page-wrapper,
+        body.sidebar-collapsed .navbar-vertical ~ .page-wrapper,
+        body.sidebar-collapsed .navbar-expand-lg.navbar-vertical ~ .page-wrapper,
+        body.sidebar-collapsed .navbar-expand-xl.navbar-vertical ~ .page-wrapper,
+        body.sidebar-collapsed .navbar-expand-xxl.navbar-vertical ~ .page-wrapper,
+        body.sidebar-collapsed .navbar-expand.navbar-vertical ~ .page-wrapper {
+          margin-left: 72px !important;
+          width: auto !important;
+          max-width: 100% !important;
+        }
+
+        /* Full-width container utilization when sidebar is collapsed */
+        body.sidebar-collapsed .container-xl,
+        body.sidebar-collapsed .page-header .container-xl,
+        body.sidebar-collapsed .page-body .container-xl {
+          width: 100% !important;
+          max-width: 100% !important;
+          padding-left: 1.5rem !important;
+          padding-right: 1.5rem !important;
+        }
+
+        @media (min-width: 1921px) {
+          body.sidebar-collapsed .container-xl {
+            max-width: 1800px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
+          }
         }
 
         /* 2. Remove Tabler Default Padding so our Flex rules dominate */
@@ -114,11 +183,10 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
 
         /* 3. Text and Sub-elements Transition */
         .navbar-vertical .nav-link-title,
-        .navbar-vertical .brand-container h1,
         .navbar-vertical li > span,
         .navbar-vertical .mt-auto .user-info,
         .navbar-vertical .mt-auto .avatar {
-          transition: opacity 200ms ease, max-width 280ms cubic-bezier(0.4, 0, 0.2, 1), margin 280ms ease, transform 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+          transition: opacity 240ms ease, max-width 380ms cubic-bezier(0.25, 1, 0.5, 1), margin 380ms ease, transform 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
           opacity: 1;
           max-width: 250px;
           white-space: nowrap;
@@ -128,7 +196,6 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
 
         /* When Collapsed: Shrink Text and Avatars completely */
         body.sidebar-collapsed .navbar-vertical .nav-link-title,
-        body.sidebar-collapsed .navbar-vertical .brand-container h1,
         body.sidebar-collapsed .navbar-vertical li > span,
         body.sidebar-collapsed .navbar-vertical .mt-auto .user-info,
         body.sidebar-collapsed .navbar-vertical .mt-auto .avatar {
@@ -149,7 +216,7 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
            
         /* Nav Item Height & Gap Control */
         .navbar-vertical .nav-item {
-          transition: margin 280ms cubic-bezier(0.4, 0, 0.2, 1), max-height 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+          transition: margin 380ms cubic-bezier(0.25, 1, 0.5, 1), max-height 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
           margin-bottom: 2px !important; /* Compact gap */
         }
         
@@ -163,16 +230,6 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
           align-items: center !important;
           justify-content: flex-start !important;
           flex-wrap: nowrap !important;
-        }
-
-        .navbar-vertical .brand-container {
-          padding-left: 24px !important;
-          padding-right: 24px !important;
-          display: flex !important;
-          align-items: center !important;
-          justify-content: flex-start !important;
-          flex-wrap: nowrap !important;
-          flex-shrink: 0 !important;
         }
 
         .navbar-vertical .mt-auto > div {
@@ -241,7 +298,7 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
         /* Space between icon and text when expanded */
         .navbar-vertical .nav-link-icon {
           margin-right: 12px !important;
-          transition: margin-right 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+          transition: margin-right 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
         }
         body.sidebar-collapsed .navbar-vertical .nav-link-icon {
           margin-right: 0 !important;
@@ -249,8 +306,22 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
 
         /* 6. Header Brand & Hamburger Fix */
         .navbar-vertical .brand-container {
+          padding-left: 16px !important;
+          padding-right: 12px !important;
           padding-top: 14px !important;
           padding-bottom: 14px !important;
+          display: flex !important;
+          align-items: center !important;
+          justify-content: space-between !important;
+          flex-wrap: nowrap !important;
+          overflow: hidden !important;
+          transition: padding 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
+        }
+
+        body.sidebar-collapsed .navbar-vertical .brand-container {
+          padding-left: 20px !important;
+          padding-right: 20px !important;
+          justify-content: center !important;
         }
         
         .navbar-vertical .brand-title {
@@ -260,6 +331,8 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
           letter-spacing: -0.01em;
           line-height: 1.1;
           margin-bottom: 2px;
+          text-align: left !important;
+          white-space: nowrap !important;
         }
         
         .navbar-vertical .brand-subtitle {
@@ -267,28 +340,67 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
           font-weight: 500 !important;
           color: inherit !important;
           opacity: 0.6 !important;
-          letter-spacing: 0.05em !important;
+          letter-spacing: 0.03em !important;
           text-transform: uppercase;
           line-height: 1;
+          text-align: left !important;
+          white-space: nowrap !important;
         }
 
-        .navbar-vertical .brand-container h1 {
-          margin-left: 0 !important; 
-          display: flex;
-          align-items: center;
+        .navbar-vertical .brand-container h1,
+        .navbar-vertical .brand-container .navbar-brand {
+          margin: 0 !important; 
+          padding: 0 !important;
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          justify-content: center !important;
+          text-align: left !important;
+          flex: 1 1 auto !important;
+          min-width: 0 !important;
+          max-width: 170px !important;
+          overflow: hidden !important;
+          white-space: nowrap !important;
+          opacity: 1 !important;
+          transform: translateX(0) !important;
+          cursor: default !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          pointer-events: none !important;
+          transition: opacity 240ms ease, max-width 380ms cubic-bezier(0.25, 1, 0.5, 1), transform 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
         }
 
-        /* Toggle Button Size & Positioning */
-        
-        /* 
-           MATHEMATICAL ALIGNMENT FOR COLLAPSED BUTTON:
-           - Collapsed width: 72px
-           - Left padding: 24px
-           - Nav Icon Center: 24px + (24px/2) = 36px
-           - To center a 32px button at 36px, its left edge must be at 20px.
-           - We have 24px left padding, so we apply -4px margin-left to pull it to 20px!
-        */
-        
+        .navbar-vertical .brand-container h1 a,
+        .navbar-vertical .brand-container .navbar-brand a {
+          display: flex !important;
+          flex-direction: column !important;
+          align-items: flex-start !important;
+          justify-content: center !important;
+          text-align: left !important;
+          width: 100% !important;
+          cursor: default !important;
+          user-select: none !important;
+          -webkit-user-select: none !important;
+          pointer-events: none !important;
+          text-decoration: none !important;
+          color: inherit !important;
+        }
+
+        .navbar-vertical .brand-container a#sidebar-toggle {
+          pointer-events: auto !important;
+        }
+
+        body.sidebar-collapsed .navbar-vertical .brand-container h1,
+        body.sidebar-collapsed .navbar-vertical .brand-container .navbar-brand {
+          opacity: 0 !important;
+          max-width: 0 !important;
+          min-width: 0 !important;
+          margin: 0 !important;
+          padding: 0 !important;
+          pointer-events: none !important;
+          overflow: hidden !important;
+          transform: translateX(-10px) !important;
+        }
 
         /* 7. Active State */
         body.sidebar-collapsed .navbar-vertical .nav-link {
@@ -315,45 +427,48 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
           padding-top: 1rem !important;
           padding-bottom: 1rem !important;
           gap: 14px !important;
-          transition: gap 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+          transition: gap 380ms cubic-bezier(0.25, 1, 0.5, 1) !important;
         }
         body.sidebar-collapsed .navbar-vertical .mt-auto > div {
           gap: 0 !important;
         }
+
         /* Toggle Button Size & Positioning */
         .navbar-vertical .brand-container a#sidebar-toggle {
           width: 32px !important;
           height: 32px !important;
+          min-width: 32px !important;
+          min-height: 32px !important;
           margin: 0 !important;
           padding: 0 !important;
-          display: flex !important;
+          display: inline-flex !important;
           align-items: center !important;
           justify-content: center !important;
-          margin-left: auto !important;
           border: none !important;
+          border-radius: 6px !important;
           box-shadow: none !important;
           outline: none !important;
           background: transparent !important;
           color: var(--tblr-body-color) !important;
           opacity: 0.75 !important;
-          transition: margin-left 280ms cubic-bezier(0.4, 0, 0.2, 1), transform 280ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+          cursor: pointer;
+          flex-shrink: 0 !important;
+          transition: opacity 200ms ease, background-color 200ms ease, transform 150ms ease !important;
         }
 
-        body.sidebar-collapsed .navbar-vertical .brand-container a#sidebar-toggle {
-          margin-left: -4px !important;
+
+        .navbar-vertical .brand-container a#sidebar-toggle:hover {
+          opacity: 1 !important;
+          background-color: rgba(0, 0, 0, 0.06) !important;
+        }
+        [data-bs-theme="dark"] .navbar-vertical .brand-container a#sidebar-toggle:hover {
+          background-color: rgba(255, 255, 255, 0.08) !important;
         }
 
-        .navbar-vertical .brand-container a#sidebar-toggle:hover,
-        .navbar-vertical .brand-container a#sidebar-toggle:focus,
         .navbar-vertical .brand-container a#sidebar-toggle:active {
-          background: transparent !important;
-          background-color: transparent !important;
-          border: none !important;
-          box-shadow: none !important;
-          outline: none !important;
-          color: var(--tblr-body-color) !important;
-          opacity: 0.75 !important;
+          transform: scale(0.92) !important;
         }
+
       }
     </style>
 </head>
@@ -375,7 +490,12 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
 
 <div class="page">
     <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none sticky-top" style="z-index: 1030; background: var(--tblr-bg-surface); border-bottom: 1px solid var(--tblr-border-color);">
-        <div class="container-xl">
+        <div class="container-xl d-flex align-items-center">
+            <div class="collapse navbar-collapse" id="navbar-menu">
+                <span class="navbar-text">
+                    <b><?php echo $header_isp_name; ?></b>
+                </span>
+            </div>
             <!-- Navbar brand can go here if needed, but we keep the right side menu -->
             <div class="navbar-nav flex-row order-md-last ms-auto">
                 <div class="d-none d-md-flex">
@@ -399,11 +519,6 @@ if (!defined('APP_LOADED')) require_once dirname(__DIR__, 2) . '/config/bootstra
                     </div>
                 </div>
             </div>
-            <div class="collapse navbar-collapse" id="navbar-menu">
-                <span class="navbar-text">
-                    <b><?php echo $isp_name; ?></b>
-                </span>
-            </div>
         </div>
     </header>
 
@@ -415,16 +530,28 @@ function setTheme(theme) {
 
 // Sidebar toggle logic
 document.addEventListener("DOMContentLoaded", function() {
-    const toggleBtn = document.getElementById('sidebar-toggle');
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle');
     const body = document.body;
 
-    if (toggleBtn) {
-        toggleBtn.addEventListener('click', function() {
-            body.classList.toggle('sidebar-collapsed');
-            localStorage.setItem('sidebarCollapsed', body.classList.contains('sidebar-collapsed'));
-            // Trigger window resize so apexcharts can adjust
-            setTimeout(() => window.dispatchEvent(new Event('resize')), 200);
-        });
+    function handleToggle(e) {
+        if (e) e.preventDefault();
+        body.classList.toggle('sidebar-collapsed');
+        const isCollapsed = body.classList.contains('sidebar-collapsed');
+        localStorage.setItem('sidebarCollapsed', isCollapsed);
+
+        document.dispatchEvent(new CustomEvent('sidebar-toggle', { detail: { collapsed: isCollapsed } }));
+
+        // Wait until the 380ms CSS transition finishes before firing resize and map invalidation
+        setTimeout(function() {
+            window.dispatchEvent(new Event('resize'));
+            if (window.overviewMap) window.overviewMap.invalidateSize();
+            if (window.tmap) window.tmap.invalidateSize();
+            if (window.hsMap) window.hsMap.invalidateSize();
+        }, 400);
+    }
+
+    if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', handleToggle);
     }
 });
 </script>

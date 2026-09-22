@@ -59,6 +59,11 @@ class Connection
 
     private function connect(): void
     {
+        if (empty($this->host) || empty($this->user)) {
+            $this->client = null;
+            return;
+        }
+
         try {
             $this->client = new Client([
                 'host'     => $this->host,
@@ -68,7 +73,7 @@ class Connection
                 'timeout'  => $this->timeout,
                 'attempts' => 1,
             ]);
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             $this->client = null;
         }
     }
@@ -100,7 +105,7 @@ class Connection
 
         try {
             return $client->query($query)->read();
-        } catch (Exception $e) {
+        } catch (\Throwable $e) {
             return [];
         }
     }

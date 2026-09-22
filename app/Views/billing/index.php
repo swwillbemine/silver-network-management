@@ -1,6 +1,7 @@
-<!doctype html>
-<html lang="id">
-<?php \App\Core\View::header(); ?>
+<?php
+$title = 'Tagihan';
+\App\Core\View::header(['title' => $title]);
+?>
 <body>
 <div class="page">
   <?php \App\Core\View::sidebar(); ?>
@@ -43,22 +44,22 @@
           <div class="col-sm-4">
             <div class="card card-sm"><div class="card-body">
               <div class="text-muted">Belum Bayar</div>
-              <div class="fs-4 fw-bold text-warning"><?= $stats['unpaid']['cnt'] ?? 0 ?></div>
-              <div class="text-muted small">Rp <?= number_format($stats['unpaid']['total']??0,0,',','.') ?></div>
+              <div class="fs-4 fw-bold text-warning"><?= (int)($stats['unpaid']['cnt'] ?? 0) ?></div>
+              <div class="text-muted small">Rp <?= number_format((float)($stats['unpaid']['total'] ?? 0), 0, ',', '.') ?></div>
             </div></div>
           </div>
           <div class="col-sm-4">
             <div class="card card-sm"><div class="card-body">
               <div class="text-muted">Lunas</div>
-              <div class="fs-4 fw-bold text-success"><?= $stats['paid']['cnt'] ?? 0 ?></div>
-              <div class="text-muted small">Rp <?= number_format($stats['paid']['total']??0,0,',','.') ?></div>
+              <div class="fs-4 fw-bold text-success"><?= (int)($stats['paid']['cnt'] ?? 0) ?></div>
+              <div class="text-muted small">Rp <?= number_format((float)($stats['paid']['total'] ?? 0), 0, ',', '.') ?></div>
             </div></div>
           </div>
           <div class="col-sm-4">
             <div class="card card-sm"><div class="card-body">
               <div class="text-muted">Total Periode</div>
-              <div class="fs-4 fw-bold"><?= ($stats['unpaid']['cnt']??0)+($stats['paid']['cnt']??0) ?></div>
-              <div class="text-muted small">Rp <?= number_format(($stats['unpaid']['total']??0)+($stats['paid']['total']??0),0,',','.') ?></div>
+              <div class="fs-4 fw-bold"><?= (int)($stats['unpaid']['cnt'] ?? 0) + (int)($stats['paid']['cnt'] ?? 0) ?></div>
+              <div class="text-muted small">Rp <?= number_format((float)($stats['unpaid']['total'] ?? 0) + (float)($stats['paid']['total'] ?? 0), 0, ',', '.') ?></div>
             </div></div>
           </div>
         </div>
@@ -90,10 +91,10 @@
                 <td><code class="small"><?= htmlspecialchars($b['pppoe_username']) ?></code></td>
                 <td class="text-muted small"><?= htmlspecialchars($b['pkg_name']) ?></td>
                 <td>
-                  <div class="fw-semibold">Rp <?= number_format($b['amount'],0,',','.') ?></div>
-                  <?php if (($b['discount_amount']??0) > 0): ?>
-                  <div class="text-success small">Diskon Rp <?= number_format($b['discount_amount'],0,',','.') ?></div>
-                  <div class="text-muted" style="font-size:.7rem;text-decoration:line-through">Rp <?= number_format($b['amount']+$b['discount_amount'],0,',','.') ?></div>
+                  <div class="fw-semibold">Rp <?= number_format((float)($b['amount'] ?? 0), 0, ',', '.') ?></div>
+                  <?php if (((float)($b['discount_amount'] ?? 0)) > 0): ?>
+                  <div class="text-success small">Diskon Rp <?= number_format((float)($b['discount_amount'] ?? 0), 0, ',', '.') ?></div>
+                  <div class="text-muted" style="font-size:.7rem;text-decoration:line-through">Rp <?= number_format((float)($b['amount'] ?? 0) + (float)($b['discount_amount'] ?? 0), 0, ',', '.') ?></div>
                   <?php endif; ?>
                 </td>
                 <td class="text-muted">

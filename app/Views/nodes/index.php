@@ -296,6 +296,7 @@ function snmInitControls(map, containerId, defaultMode) {
 // ── OVERVIEW MAP ─────────────────────────────────────────────────────────────
 const nodeData = <?= json_encode(array_values(array_filter($nodes, fn($n) => $n['latitude'] && $n['longitude']))) ?>;
 const overviewMap = L.map('overview-map', {maxZoom:22}).setView([-7.02580113, 112.47867107], 14);
+window.overviewMap = overviewMap;
 snmInitControls(overviewMap, 'overview-map-wrap');
 nodeData.forEach(n => {
   L.marker([parseFloat(n.latitude), parseFloat(n.longitude)])
@@ -305,6 +306,21 @@ nodeData.forEach(n => {
 if (nodeData.length) {
   overviewMap.fitBounds(nodeData.map(n => [parseFloat(n.latitude), parseFloat(n.longitude)]), {padding:[30,30]});
 }
+
+function invalidateOverviewMap() {
+  if (overviewMap) {
+    overviewMap.invalidateSize();
+  }
+}
+document.addEventListener('sidebar-toggle', function() {
+  setTimeout(invalidateOverviewMap, 50);
+  setTimeout(invalidateOverviewMap, 150);
+  setTimeout(invalidateOverviewMap, 300);
+});
+window.addEventListener('resize', function() {
+  setTimeout(invalidateOverviewMap, 100);
+});
+setTimeout(invalidateOverviewMap, 200);
 
 // ── MODAL NODE (managed manually) ────────────────────────────────────────────
 const bsNodeModal   = new bootstrap.Modal(document.getElementById('modalNode'), {backdrop:'static'});
