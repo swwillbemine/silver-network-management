@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # Exclude existing files, directories, or symlinks
+    RewriteCond %{REQUEST_FILENAME} -f [OR]
+    RewriteCond %{REQUEST_FILENAME} -d
+    RewriteRule ^ - [L]
+
+    # Exclude standalone API directories
+    RewriteRule ^api/ - [L]
+
+    # Rewrite everything else to Front Controller
+    RewriteRule ^(.*)$ public/index.php [QSA,L]
+</IfModule>
+

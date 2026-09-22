@@ -175,9 +175,8 @@ silver-network-management/
 │   └── security.php        # requireLogin(), requireRole(), session enforcement
 ├── install/                # Web installer (delete after use)
 ├── layout/
-│   ├── header.php          # HTML head, Tabler CSS
-│   ├── sidebar.php         # Navigation sidebar
-│   └── footer.php          # JS includes, Bootstrap JS
+│   ├── header.php          # HTML head, Tabler CSS & JS
+│   └── sidebar.php         # Navigation sidebar
 ├── mikrotik/               # MikroTik API wrapper functions
 │   ├── connection.php      # get_mikrotik_client(), mikrotik_query()
 │   ├── ppp.php             # PPP secrets and profiles
@@ -187,11 +186,7 @@ silver-network-management/
 ├── uploads/                # User-uploaded files (logos, photos)
 ├── billing.php             # Billing management
 ├── customers.php           # Customer list
-├── customer_detail.php     # Single customer with live stats
-├── customer_form.php       # Add/edit customer
 ├── packages.php            # Package list
-├── package_form.php        # Add/edit package with MikroTik sync
-├── package_import.php      # Import profiles from MikroTik
 ├── routers.php             # Router list and status
 ├── nodes.php               # Node management
 ├── pops.php                # POP management

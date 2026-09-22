@@ -1,32 +1,48 @@
 <?php
 // api/pools.php
 require_once __DIR__ . '/../config/bootstrap.php';
-requireLogin();
+
+use App\Repositories\RouterRepository;
+use App\MikroTik\Connection;
+use App\MikroTik\IPPoolManager;
+use App\Auth\Middleware;
+
+Middleware::requireLogin();
 
 header('Content-Type: application/json');
 
-$router_id = (int)($_GET['router_id'] ?? 0);
-if (!$router_id) { echo json_encode([]); exit; }
+$routerId = (int)($_GET['router_id'] ?? 0);
+if (!$routerId) {
+    echo json_encode([]);
+    exit;
+}
 
-$rq = $pdo->prepare("SELECT * FROM mikrotiks WHERE id=?");
-$rq->execute([$router_id]);
-$router = $rq->fetch(PDO::FETCH_ASSOC);
-if (!$router) { echo json_encode([]); exit; }
+$routerRepo = new RouterRepository();
+$router = $routerRepo->find($routerId);
+if (!$router) {
+    echo json_encode([]);
+    exit;
+}
 
-$client = get_mikrotik_client(
-    $router['host'], $router['username'], $router['password'],
-    (int)$router['port'], (bool)$router['api_ssl']
-);
-if (!$client) { echo json_encode(['_error' => 'Cannot connect to '.$router['host']]); exit; }
+$conn = Connection::fromRouter($router);
+if (!$conn->isConnected()) {
+    echo json_encode(['_error' => 'Cannot connect to ' . ($router['ip_address'] ?? ($router['host'] ?? $router['name']))]);
+    exit;
+}
 
-$raw = get_ip_pools($client);
+$poolMgr = new IPPoolManager($conn);
+$raw = $poolMgr->getPools();
+
 $pools = [];
 foreach ($raw as $p) {
-    $name = $p['name'] ?? ''; if (!$name) continue;
+    $name = $p['name'] ?? '';
+    if (!$name) continue;
     $pools[] = [
         'name'   => $name,
         'ranges' => $p['ranges'] ?? '-',
         'next'   => $p['next-pool'] ?? '',
     ];
 }
+
 echo json_encode($pools);
+exit;

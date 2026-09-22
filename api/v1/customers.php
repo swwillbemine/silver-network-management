@@ -24,7 +24,9 @@ define('APP_LOADED', true);
 define('BASE_PATH', realpath(__DIR__ . '/../../'));
 
 require_once BASE_PATH . '/config/database.php';
-require_once BASE_PATH . '/mikrotik/connection.php';
+require_once BASE_PATH . '/vendor/autoload.php';
+
+use App\MikroTik\Connection;
 
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
@@ -229,21 +231,21 @@ if ($want_live && !empty($customers)) {
         $creds = $host_creds[$host] ?? null;
         if (!$creds) continue;
 
-        $client = @get_mikrotik_client(
+        $conn = new Connection(
             $host, $creds['username'], $creds['password'],
-            (int)$creds['port'], (bool)$creds['api_ssl']
+            (int)$creds['port']
         );
-        if (!$client) continue;
+        if (!$conn->isConnected()) continue;
 
         // Fetch semua sesi aktif sekaligus
-        $sessions = mikrotik_query($client, '/ppp/active', 'print');
+        $sessions = $conn->query('/ppp/active', 'print');
         $session_map = []; // username => session data
         foreach ($sessions as $s) {
             $session_map[$s['name'] ?? ''] = $s;
         }
 
         // Fetch queue simple untuk traffic data
-        $queues = mikrotik_query($client, '/queue/simple', 'print');
+        $queues = $conn->query('/queue/simple', 'print');
         $queue_map = [];
         foreach ($queues as $q) {
             $qn = strtolower(trim($q['name'] ?? '', '<>'));

@@ -11,10 +11,13 @@
  * 5. Log akses
  */
 
-define('PROXY_ENTRY', true);
+if (!defined('PROXY_ENTRY')) {
+    define('PROXY_ENTRY', true);
+}
 require_once __DIR__ . '/config/bootstrap.php';
-requireLogin();
-require_once BASE_PATH . '/mikrotik/connection.php';
+if (!defined('SNM_TEST_MODE')) {
+    \App\Auth\Middleware::requireLogin();
+}
 
 // ── SECRET KEY ────────────────────────────────────────────────────────────────
 function proxySecret(): string {
@@ -66,22 +69,21 @@ function proxyLog(string $lvl, string $msg): void {
         FILE_APPEND | LOCK_EX);
 }
 
+if (!defined('SNM_TEST_MODE')) {
 // ── PARSE URL ─────────────────────────────────────────────────────────────────
-$script    = $_SERVER['SCRIPT_NAME'];
-$uri       = $_SERVER['REQUEST_URI'];
+$uri       = $_SERVER['REQUEST_URI'] ?? '';
 $parsed    = parse_url($uri);
 $uri_path  = $parsed['path'] ?? $uri;
 $query_str = isset($parsed['query']) ? '?' . $parsed['query'] : '';
-$path_info = substr($uri_path, strlen($script));
 
-if (!preg_match('#^/([0-9]+)/([0-9a-f]{64})(/.*)?$#', $path_info, $m)) {
+if (preg_match('#/(?:router_proxy\.php|router-proxy)/([0-9]+)/([0-9a-f]{64})(/.*)?$#', $uri_path, $m)) {
+    $customer_id = (int)$m[1];
+    $token       = $m[2];
+    $target_path = ($m[3] ?? '') !== '' ? $m[3] : '/';
+} else {
     http_response_code(403);
     die(_proxyError('Format URL tidak valid.', 403));
 }
-
-$customer_id = (int)$m[1];
-$token       = $m[2];
-$target_path = ($m[3] ?? '') !== '' ? $m[3] : '/';
 
 // ── AMBIL DATA PELANGGAN ──────────────────────────────────────────────────────
 $stmt = $pdo->prepare("
@@ -104,12 +106,12 @@ $wan_ip   = null;
 $wan_port = (int)($customer['remote_mgmt_port'] ?? 80) ?: 80;
 
 if ($customer['host'] && $customer['pppoe_username']) {
-    $client = @get_mikrotik_client(
+    $conn = new \App\MikroTik\Connection(
         $customer['host'], $customer['username'], $customer['password'],
-        (int)$customer['api_port'], (bool)$customer['api_ssl']
+        (int)$customer['api_port']
     );
-    if ($client) {
-        foreach (mikrotik_query($client, '/ppp/active', 'print') as $s) {
+    if ($conn->isConnected()) {
+        foreach ($conn->query('/ppp/active', 'print') as $s) {
             if (($s['name'] ?? '') === $customer['pppoe_username']) {
                 $wan_ip = $s['address'] ?? null;
                 break;
@@ -336,11 +338,12 @@ if ($is_text && $response !== false) {
 }
 
 echo $response;
+}
 
 function _proxyError(string $msg, int $code): string {
     $labels = [400=>'Bad Request',403=>'Akses Ditolak',404=>'Tidak Ditemukan',
                502=>'Bad Gateway',503=>'Service Unavailable'];
-    $back = defined('BASE_URL') ? BASE_URL . '/customers.php' : '/customers.php';
+    $back = defined('BASE_URL') ? BASE_URL . '/customers' : '/customers';
     
     // Perbaikan: Evaluasi variabel di luar Heredoc
     $title = $labels[$code] ?? $code; 
@@ -367,7 +370,7 @@ HTML;
 
 function _proxyBanner(array $c, string $ip, int $port, int $cid): string {
     $name       = htmlspecialchars($c['cname'] ?? '');
-    $detail_url = BASE_URL . '/customer_detail.php?id=' . $cid;
+    $detail_url = BASE_URL . '/customers/' . $cid;
     $ts         = date('H:i:s');
     return <<<'BANNEREOF'
 <style>

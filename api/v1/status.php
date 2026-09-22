@@ -39,7 +39,9 @@ define('APP_LOADED', true);
 define('BASE_PATH', realpath(__DIR__ . '/../../'));
 
 require_once BASE_PATH . '/config/database.php';
-require_once BASE_PATH . '/mikrotik/connection.php';
+require_once BASE_PATH . '/vendor/autoload.php';
+
+use App\MikroTik\Connection;
 
 header('Content-Type: application/json; charset=utf-8');
 header('X-Content-Type-Options: nosniff');
@@ -155,13 +157,13 @@ $session_data = [];
 
 foreach ($by_router as $host => $info) {
     $cr = $info['creds'];
-    $client = @get_mikrotik_client(
+    $conn = new Connection(
         $cr['host'], $cr['username'], $cr['password'],
-        $cr['port'], $cr['ssl']
+        $cr['port']
     );
-    if (!$client) continue;
+    if (!$conn->isConnected()) continue;
 
-    $sessions = mikrotik_query($client, '/ppp/active', 'print');
+    $sessions = $conn->query('/ppp/active', 'print');
     foreach ($sessions as $s) {
         $uname = $s['name'] ?? '';
         $cid   = $info['map'][$uname] ?? null;

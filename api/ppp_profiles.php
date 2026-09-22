@@ -1,27 +1,40 @@
 <?php
 // api/ppp_profiles.php — Returns PPP profile names for a router
 require_once __DIR__ . '/../config/bootstrap.php';
-requireLogin();
+
+use App\Repositories\RouterRepository;
+use App\MikroTik\Connection;
+use App\MikroTik\PPPManager;
+use App\Auth\Middleware;
+
+Middleware::requireLogin();
 header('Content-Type: application/json');
 
-$router_id = (int)($_GET['router_id'] ?? 0);
-if (!$router_id) { echo json_encode([]); exit; }
+$routerId = (int)($_GET['router_id'] ?? 0);
+if (!$routerId) {
+    echo json_encode([]);
+    exit;
+}
 
-$rq = $pdo->prepare("SELECT * FROM mikrotiks WHERE id=?");
-$rq->execute([$router_id]);
-$router = $rq->fetch(PDO::FETCH_ASSOC);
-if (!$router) { echo json_encode([]); exit; }
+$routerRepo = new RouterRepository();
+$router = $routerRepo->find($routerId);
+if (!$router) {
+    echo json_encode([]);
+    exit;
+}
 
-$client = get_mikrotik_client(
-    $router['host'], $router['username'], $router['password'], (int)$router['port']
-);
-if (!$client) { echo json_encode(['_error' => 'Cannot connect']); exit; }
+$conn = Connection::fromRouter($router);
+if (!$conn->isConnected()) {
+    echo json_encode(['_error' => 'Cannot connect']);
+    exit;
+}
 
-$raw = mikrotik_query($client, '/ppp/profile', 'print', []);
+$ppp = new PPPManager($conn);
+$raw = $ppp->getProfiles();
 $profiles = [];
 foreach ($raw as $p) {
     $name = $p['name'] ?? '';
-    if (!$name || $name === 'default') continue; // skip built-in default
+    if (!$name || $name === 'default') continue;
     $profiles[] = [
         'id'         => $p['.id']          ?? '',
         'name'       => $name,
@@ -29,4 +42,6 @@ foreach ($raw as $p) {
         'queue_type' => $p['queue-type']   ?? '',
     ];
 }
+
 echo json_encode($profiles);
+exit;

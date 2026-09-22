@@ -1,5 +1,10 @@
 {
     "require": {
         "evilfreelancer/routeros-api-php": "^1.6"
+    },
+    "autoload": {
+        "psr-4": {
+            "App\\": "app/"
+        }
     }
 }

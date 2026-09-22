@@ -1,7 +1,12 @@
 <?php
 // api/pppoe_status.php
 require_once __DIR__ . '/../config/bootstrap.php';
-requireLogin();
+
+use App\Repositories\RouterRepository;
+use App\MikroTik\Connection;
+use App\Auth\Middleware;
+
+Middleware::requireLogin();
 
 header('Content-Type: application/json');
 
@@ -9,26 +14,33 @@ $input     = json_decode(file_get_contents('php://input'), true);
 $router_id = (int)($input['router_id'] ?? $_GET['router_id'] ?? 0);
 $usernames = $input['usernames'] ?? [];
 
-if (!$router_id || empty($usernames)) { echo json_encode([]); exit; }
+if (!$router_id || empty($usernames)) {
+    echo json_encode([]);
+    exit;
+}
 
-$rq = $pdo->prepare("SELECT * FROM mikrotiks WHERE id=?");
-$rq->execute([$router_id]);
-$router = $rq->fetch(PDO::FETCH_ASSOC);
-if (!$router) { echo json_encode([]); exit; }
+$routerRepo = new RouterRepository();
+$router = $routerRepo->find($router_id);
+if (!$router) {
+    echo json_encode([]);
+    exit;
+}
 
-$client = @get_mikrotik_client(
-    $router['host'], $router['username'], $router['password'],
-    (int)$router['port'], (bool)$router['api_ssl']
-);
-if (!$client) { echo json_encode(['_error' => 'offline']); exit; }
+$conn = Connection::fromRouter($router);
+if (!$conn->isConnected()) {
+    echo json_encode(['_error' => 'offline']);
+    exit;
+}
 
 $set = array_flip(array_map('strtolower', $usernames));
+$result = [];
 
 // ── 1. /ppp/active → status, IP, uptime ──────────────────────────────────
-$result = [];
-foreach (mikrotik_query($client, '/ppp/active', 'print') as $s) {
+foreach ($conn->query('/ppp/active', 'print') as $s) {
     $name = $s['name'] ?? '';
-    if (!isset($set[strtolower($name)])) continue;
+    if (!isset($set[strtolower($name)])) {
+        continue;
+    }
     $result[$name] = [
         'online'    => true,
         'ip'        => $s['address'] ?? '',
@@ -45,7 +57,7 @@ foreach (mikrotik_query($client, '/ppp/active', 'print') as $s) {
 // rate field format: "tx-bps/rx-bps"  (MikroTik: tx=upload, rx=download)
 // max-limit format:  "tx-bps/rx-bps"
 // Nama queue bisa: username, <username>, pppoe-username, <pppoe-username>
-foreach (mikrotik_query($client, '/queue/simple', 'print') as $q) {
+foreach ($conn->query('/queue/simple', 'print') as $q) {
     $qname = $q['name'] ?? '';
     $clean = trim($qname, '<>');
 
@@ -56,12 +68,15 @@ foreach (mikrotik_query($client, '/queue/simple', 'print') as $q) {
             // Cari key asli (case dari /ppp/active)
             foreach (array_keys($result) as $k) {
                 if (strtolower($k) === strtolower($candidate)) {
-                    $matched = $k; break 2;
+                    $matched = $k;
+                    break 2;
                 }
             }
         }
     }
-    if (!$matched) continue;
+    if (!$matched) {
+        continue;
+    }
 
     // rate = "tx_bps/rx_bps" — realtime, diperbarui MikroTik tiap ~1 detik
     $rate  = $q['rate']      ?? '0/0';
@@ -82,7 +97,9 @@ foreach (mikrotik_query($client, '/queue/simple', 'print') as $q) {
 
 // ── 3. Offline users ──────────────────────────────────────────────────────
 foreach ($usernames as $u) {
-    if (!isset($result[$u])) $result[$u] = ['online' => false];
+    if (!isset($result[$u])) {
+        $result[$u] = ['online' => false];
+    }
 }
 
 echo json_encode($result);
