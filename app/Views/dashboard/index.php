@@ -270,10 +270,42 @@ $title = 'Dashboard';
 
         <!-- INFRA STATS -->
         <div class="row g-2 mb-3 align-items-stretch" id="infra-stats">
-          <div class="col-6 col-sm-3"><div class="card card-sm h-100 infra-card"><div class="card-body text-center py-2"><div class="infra-title">NODE</div><div class="infra-num" id="i-nodes">-</div></div></div></div>
-          <div class="col-6 col-sm-3"><div class="card card-sm h-100 infra-card"><div class="card-body text-center py-2"><div class="infra-title">POP</div><div class="infra-num" id="i-pops">-</div></div></div></div>
-          <div class="col-6 col-sm-3"><div class="card card-sm h-100 infra-card"><div class="card-body text-center py-2"><div class="infra-title">ROUTER</div><div class="infra-num" id="i-mikrotiks">-</div></div></div></div>
-          <div class="col-6 col-sm-3"><div class="card card-sm h-100 infra-card"><div class="card-body text-center py-2"><div class="infra-title">HOTSPOT</div><div class="infra-num" id="i-hotspots">-</div></div></div></div>
+          <div class="col-6 col-sm-3">
+            <div class="card card-sm h-100 infra-card">
+              <div class="card-body text-center py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-primary mb-1 d-block mx-auto" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="3" y="4" width="18" height="8" rx="3" /><rect x="3" y="12" width="18" height="8" rx="3" /><line x1="7" y1="8" x2="7" y2="8.01" /><line x1="7" y1="16" x2="7" y2="16.01" /></svg>
+                <div class="infra-title">NODE</div>
+                <div class="infra-num" id="i-nodes">-</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="card card-sm h-100 infra-card">
+              <div class="card-body text-center py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-teal mb-1 d-block mx-auto" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="11" r="3" /><path d="M17.657 16.657l-4.243 4.243a2 2 0 0 1 -2.827 0l-4.244 -4.243a8 8 0 1 1 11.314 0z" /></svg>
+                <div class="infra-title">POP</div>
+                <div class="infra-num" id="i-pops">-</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="card card-sm h-100 infra-card">
+              <div class="card-body text-center py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-azure mb-1 d-block mx-auto" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="3" y="13" width="18" height="8" rx="2" /><line x1="17" y1="17" x2="17" y2="17.01" /><line x1="13" y1="17" x2="13" y2="17.01" /><line x1="15" y1="13" x2="15" y2="11" /><path d="M11.75 8.75a4 4 0 0 1 6.5 0" /><path d="M8.5 6.5a8 8 0 0 1 13 0" /></svg>
+                <div class="infra-title">ROUTER</div>
+                <div class="infra-num" id="i-mikrotiks">-</div>
+              </div>
+            </div>
+          </div>
+          <div class="col-6 col-sm-3">
+            <div class="card card-sm h-100 infra-card">
+              <div class="card-body text-center py-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon text-orange mb-1 d-block mx-auto" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><line x1="12" y1="18" x2="12.01" y2="18" /><path d="M9.172 15.172a4 4 0 0 1 5.656 0" /><path d="M6.343 12.343a8 8 0 0 1 11.314 0" /><path d="M3.515 9.515c4.686 -4.686 12.284 -4.686 16.97 0" /></svg>
+                <div class="infra-title">HOTSPOT</div>
+                <div class="infra-num" id="i-hotspots">-</div>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- TRAFFIC SOURCE NOTE -->
