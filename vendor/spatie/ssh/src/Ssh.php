@@ -16,6 +16,8 @@ class Ssh
 
     protected bool $addBash;
 
+    protected bool $onWindows;
+
     protected Closure $processConfigurationClosure;
 
     protected Closure $onOutput;
@@ -37,6 +39,8 @@ class Ssh
         $this->password = $password;
 
         $this->addBash = true;
+
+        $this->onWindows = false;
 
         $this->processConfigurationClosure = fn (Process $process) => null;
 
@@ -163,6 +167,13 @@ class Ssh
         return $this;
     }
 
+    public function onWindows(): self
+    {
+        $this->onWindows = true;
+
+        return $this;
+    }
+
     protected function getPasswordCommand(): string
     {
         if ($this->password !== null) {
@@ -181,24 +192,60 @@ class Ssh
     {
         $commands = $this->wrapArray($command);
 
+        if ($this->onWindows) {
+            return $this->getWindowsExecuteCommand($commands);
+        }
+
+        return $this->getBashExecuteCommand($commands);
+    }
+
+    /**
+     * @param array<int, string> $commands
+     */
+    protected function getBashExecuteCommand(array $commands): string
+    {
         $commandString = implode(PHP_EOL, $commands);
 
-        if (in_array($this->host, ['local', 'localhost', '127.0.0.1'])) {
+        if ($this->isLocalHost()) {
             return $commandString;
         }
 
         $passwordCommand = $this->getPasswordCommand();
         $extraOptions = implode(' ', $this->getExtraOptions());
-
         $target = $this->getTargetForSsh();
-
+        $bash = $this->addBash ? "'bash -se'" : '';
         $delimiter = 'EOF-SPATIE-SSH';
 
-        $bash = $this->addBash ? "'bash -se'" : '';
-
-        return "{$passwordCommand}ssh {$extraOptions} {$target} {$bash} << \\$delimiter".PHP_EOL
+        return "{$passwordCommand}ssh {$extraOptions} {$target} {$bash} << \\{$delimiter}".PHP_EOL
             .$commandString.PHP_EOL
             .$delimiter;
+    }
+
+    /**
+     * On Windows the remote shell is cmd.exe, which cannot read commands from stdin the way
+     * `bash -se` does. Passing the commands as an ssh argument runs them through `cmd.exe /c`,
+     * which returns the real exit code instead of always reporting success.
+     *
+     * @param array<int, string> $commands
+     */
+    protected function getWindowsExecuteCommand(array $commands): string
+    {
+        $commandString = implode(' && ', $commands);
+
+        if ($this->isLocalHost()) {
+            return $commandString;
+        }
+
+        $passwordCommand = $this->getPasswordCommand();
+        $extraOptions = implode(' ', $this->getExtraOptions());
+        $target = $this->getTargetForSsh();
+
+        return "{$passwordCommand}ssh {$extraOptions} {$target} \"{$commandString}\"";
+    }
+
+    protected function isLocalHost(): bool
+    {
+        return in_array($this->host, ['local', 'localhost', '127.0.0.1']);
     }
 
     /**

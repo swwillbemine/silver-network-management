@@ -2,17 +2,17 @@
     "packages": [
         {
             "name": "evilfreelancer/routeros-api-php",
-            "version": "1.6.0",
-            "version_normalized": "1.6.0.0",
+            "version": "1.7.1",
+            "version_normalized": "1.7.1.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/EvilFreelancer/routeros-api-php.git",
-                "reference": "dd7bf44c461054c0101119154de21f8c8b8f4512"
+                "reference": "5351c0c622e06c73e1c64caca453240328b486d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/EvilFreelancer/routeros-api-php/zipball/dd7bf44c461054c0101119154de21f8c8b8f4512",
-                "reference": "dd7bf44c461054c0101119154de21f8c8b8f4512",
+                "url": "https://api.github.com/repos/EvilFreelancer/routeros-api-php/zipball/5351c0c622e06c73e1c64caca453240328b486d4",
+                "reference": "5351c0c622e06c73e1c64caca453240328b486d4",
                 "shasum": ""
             },
             "require": {
@@ -21,16 +21,12 @@
                 "spatie/ssh": "^1.8"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^2.16",
-                "larapack/dd": "^1.1",
-                "limedeck/phpunit-detailed-printer": "^5.0",
-                "orchestra/testbench": "^4.0|^5.0",
-                "phpunit/phpunit": "^8.0",
-                "rector/rector": "^0.7|^0.8|^0.9",
-                "roave/security-advisories": "dev-master",
+                "friendsofphp/php-cs-fixer": "^3.0",
+                "orchestra/testbench": "^8.0",
+                "phpunit/phpunit": "^9.6",
                 "squizlabs/php_codesniffer": "^3.5"
             },
-            "time": "2025-09-15T10:19:30+00:00",
+            "time": "2026-06-08T14:26:40+00:00",
             "type": "library",
             "extra": {
                 "laravel": {
@@ -72,7 +68,7 @@
             ],
             "support": {
                 "issues": "https://github.com/EvilFreelancer/routeros-api-php/issues",
-                "source": "https://github.com/EvilFreelancer/routeros-api-php/tree/1.6.0"
+                "source": "https://github.com/EvilFreelancer/routeros-api-php/tree/1.7.1"
             },
             "funding": [
                 {
@@ -88,17 +84,17 @@
         },
         {
             "name": "spatie/ssh",
-            "version": "1.13.1",
-            "version_normalized": "1.13.1.0",
+            "version": "1.13.2",
+            "version_normalized": "1.13.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/spatie/ssh.git",
-                "reference": "3d2444f72d2c6ec4d12a8d2f03e0b6f5a06114e1"
+                "reference": "3335ab102d1ad3e2cabc4e1079cd8b03f59bcd64"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/spatie/ssh/zipball/3d2444f72d2c6ec4d12a8d2f03e0b6f5a06114e1",
-                "reference": "3d2444f72d2c6ec4d12a8d2f03e0b6f5a06114e1",
+                "url": "https://api.github.com/repos/spatie/ssh/zipball/3335ab102d1ad3e2cabc4e1079cd8b03f59bcd64",
+                "reference": "3335ab102d1ad3e2cabc4e1079cd8b03f59bcd64",
                 "shasum": ""
             },
             "require": {
@@ -110,7 +106,7 @@
                 "spatie/pest-plugin-snapshots": "^1.1",
                 "symfony/var-dumper": "^5.3|^6.0|^7.0|^8.0"
             },
-            "time": "2025-11-23T11:35:56+00:00",
+            "time": "2026-07-24T12:17:04+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -138,7 +134,7 @@
             ],
             "support": {
                 "issues": "https://github.com/spatie/ssh/issues",
-                "source": "https://github.com/spatie/ssh/tree/1.13.1"
+                "source": "https://github.com/spatie/ssh/tree/1.13.2"
             },
             "funding": [
                 {
@@ -149,112 +145,24 @@
             "install-path": "../spatie/ssh"
         },
         {
-            "name": "symfony/polyfill-php80",
-            "version": "v1.33.0",
-            "version_normalized": "1.33.0.0",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/symfony/polyfill-php80.git",
-                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/symfony/polyfill-php80/zipball/0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
-                "reference": "0cc9dd0f17f61d8131e7df6b84bd344899fe2608",
-                "shasum": ""
-            },
-            "require": {
-                "php": ">=7.2"
-            },
-            "time": "2025-01-02T08:10:11+00:00",
-            "type": "library",
-            "extra": {
-                "thanks": {
-                    "url": "https://github.com/symfony/polyfill",
-                    "name": "symfony/polyfill"
-                }
-            },
-            "installation-source": "dist",
-            "autoload": {
-                "files": [
-                    "bootstrap.php"
-                ],
-                "psr-4": {
-                    "Symfony\\Polyfill\\Php80\\": ""
-                },
-                "classmap": [
-                    "Resources/stubs"
-                ]
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "MIT"
-            ],
-            "authors": [
-                {
-                    "name": "Ion Bazan",
-                    "email": "ion.bazan@gmail.com"
-                },
-                {
-                    "name": "Nicolas Grekas",
-                    "email": "p@tchwork.com"
-                },
-                {
-                    "name": "Symfony Community",
-                    "homepage": "https://symfony.com/contributors"
-                }
-            ],
-            "description": "Symfony polyfill backporting some PHP 8.0+ features to lower PHP versions",
-            "homepage": "https://symfony.com",
-            "keywords": [
-                "compatibility",
-                "polyfill",
-                "portable",
-                "shim"
-            ],
-            "support": {
-                "source": "https://github.com/symfony/polyfill-php80/tree/v1.33.0"
-            },
-            "funding": [
-                {
-                    "url": "https://symfony.com/sponsor",
-                    "type": "custom"
-                },
-                {
-                    "url": "https://github.com/fabpot",
-                    "type": "github"
-                },
-                {
-                    "url": "https://github.com/nicolas-grekas",
-                    "type": "github"
-                },
-                {
-                    "url": "https://tidelift.com/funding/github/packagist/symfony/symfony",
-                    "type": "tidelift"
-                }
-            ],
-            "install-path": "../symfony/polyfill-php80"
-        },
-        {
             "name": "symfony/process",
-            "version": "v5.4.51",
-            "version_normalized": "5.4.51.0",
+            "version": "v8.1.7",
+            "version_normalized": "8.1.7.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/process.git",
-                "reference": "467bfc56f18f5ef6d5ccb09324d7e988c1c0a98f"
+                "reference": "10823b09358e690df4ff943e24e8492bb1019fc3"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/process/zipball/467bfc56f18f5ef6d5ccb09324d7e988c1c0a98f",
-                "reference": "467bfc56f18f5ef6d5ccb09324d7e988c1c0a98f",
+                "url": "https://api.github.com/repos/symfony/process/zipball/10823b09358e690df4ff943e24e8492bb1019fc3",
+                "reference": "10823b09358e690df4ff943e24e8492bb1019fc3",
                 "shasum": ""
             },
             "require": {
-                "php": ">=7.2.5",
-                "symfony/polyfill-php80": "^1.16"
+                "php": ">=8.4.1"
             },
-            "time": "2026-01-26T15:53:37+00:00",
+            "time": "2026-09-02T12:40:29+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -282,7 +190,7 @@
             "description": "Executes commands in sub-processes",
             "homepage": "https://symfony.com",
             "support": {
-                "source": "https://github.com/symfony/process/tree/v5.4.51"
+                "source": "https://github.com/symfony/process/tree/v8.1.7"
             },
             "funding": [
                 {

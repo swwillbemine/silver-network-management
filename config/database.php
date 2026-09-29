@@ -1,11 +1,11 @@
 <?php
 // config/database.php
-// Dibuat otomatis oleh installer SilverNet pada: 1789281450
+// Dibuat otomatis oleh installer SilverNet pada: 1790648788
 
 $host    = 'localhost';
 $db      = 'silvernet-management';
 $user    = 'root';
-$pass    = '';
+$pass    = '678312';
 $port    = 3306;
 $charset = 'utf8mb4';
 

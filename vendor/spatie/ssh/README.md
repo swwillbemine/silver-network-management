@@ -1,7 +1,7 @@
 # A lightweight package to execute commands over an SSH connection
 
 [![Latest Version on Packagist](https://img.shields.io/packagist/v/spatie/ssh.svg?style=flat-square)](https://packagist.org/packages/spatie/ssh)
-[![GitHub Tests Action Status](https://img.shields.io/github/workflow/status/spatie/ssh/run-tests?label=tests)](https://github.com/spatie/ssh/actions?query=workflow%3Arun-tests+branch%3Amaster)
+[![GitHub Tests Action Status](https://github.com/spatie/ssh/actions/workflows/run-tests.yml/badge.svg)](https://github.com/spatie/ssh/actions?query=workflow%3Arun-tests+branch%3Amaster)
 [![Total Downloads](https://img.shields.io/packagist/dt/spatie/ssh.svg?style=flat-square)](https://packagist.org/packages/spatie/ssh)
 
 You can execute an SSH command like this:
@@ -201,13 +201,15 @@ Whenever there is output that closure will get called with two parameters:
 - `type`: this can be `Symfony\Component\Process\Process::OUT` for regular output and `Symfony\Component\Process\Process::ERR` for error output
 - `line`: the output itself
 
-### Windows Target 
+### Windows Target
 
-If your target is a Windows machine, you can use the `removeBash` method to remove the bash command from the command line.
+If your target is a Windows machine, use the `onWindows` method.
 
 ```php
-Ssh::create('user', 'host')->removeBash();
+Ssh::create('user', 'host')->onWindows()->execute('dir');
 ```
+
+By default this package pipes your commands to `bash` on the remote host. On Windows the remote shell is `cmd.exe`, which handles input differently and always reports a successful exit code, even when a command fails. The `onWindows` method passes your commands as an argument to `ssh` instead, so `cmd.exe` runs them through `cmd.exe /c` and their real exit code (and thus `isSuccessful()`) is preserved.
 
 ## Testing
 

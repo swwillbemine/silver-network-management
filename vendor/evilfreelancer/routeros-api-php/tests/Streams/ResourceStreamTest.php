@@ -183,7 +183,7 @@ class ResourceStreamTest extends TestCase
 
     public function writeProvider(): array
     {
-        $resource = fopen('/dev/null', 'wb');
+        $resource = fopen(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null', 'wb');
         $null     = new ResourceStream($resource);
 
         return [
@@ -208,7 +208,7 @@ class ResourceStreamTest extends TestCase
 
     public function writeBadResourceProvider(): array
     {
-        $resource = fopen('/dev/null', 'wb');
+        $resource = fopen(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null', 'wb');
         $me       = new ResourceStream($resource);
         fclose($resource);
 
@@ -235,7 +235,7 @@ class ResourceStreamTest extends TestCase
     public function doubleCloseProvider(): array
     {
         return [
-            [new ResourceStream(fopen('/dev/null', 'wb')), 'sasasaas'],  // Take that
+            [new ResourceStream(fopen(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null', 'wb')), 'sasasaas'],  // Take that
         ];
     }
 
@@ -259,7 +259,7 @@ class ResourceStreamTest extends TestCase
     public function writeClosedResourceProvider(): array
     {
         return [
-            [new ResourceStream(fopen('/dev/null', 'wb')), 'sasasaas'],  // Take that
+            [new ResourceStream(fopen(PHP_OS_FAMILY === 'Windows' ? 'NUL' : '/dev/null', 'wb')), 'sasasaas'],  // Take that
         ];
     }
 }

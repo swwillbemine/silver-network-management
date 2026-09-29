@@ -14,10 +14,10 @@ return [
      |
      */
 
-    'host' => env('ROUTEROS_HOST', '192.168.88.1'), // Address of Mikrotik RouterOS
-    'user' => env('ROUTEROS_USER', 'admin'),        // Username
-    'pass' => env('ROUTEROS_PASS'),                 // Password
-    'port' => (int) env('ROUTEROS_PORT', 8728),     // RouterOS API port number for access (if not set use default or default with SSL if SSL enabled)
+    'host'                    => env('ROUTEROS_HOST', '192.168.88.1'), // Address of Mikrotik RouterOS
+    'user'                    => env('ROUTEROS_USER', 'admin'),        // Username
+    'pass'                    => env('ROUTEROS_PASS'),                 // Password
+    'port'                    => (int) env('ROUTEROS_PORT', 8728),     // RouterOS API port number for access (if not set use default or default with SSL if SSL enabled)
 
     /*
      |--------------------------------------------------------------------------
@@ -30,14 +30,14 @@ return [
      |
      */
 
-    'attempts'        => (int) env('ROUTEROS_ATTEMPTS', 10),                                      // Count of attempts to establish TCP session
-    'delay'           => (int) env('ROUTEROS_DELAY', 1),                                          // Delay between attempts in seconds
-    'timeout'         => (int) env('ROUTEROS_TIMEOUT', 10),                                       // Max timeout for instantiating connection with RouterOS
-    'socket_timeout'  => (int) env('ROUTEROS_SOCKET_TIMEOUT', env('ROUTEROS_TIMEOUT', 30)),       // Max timeout for read from RouterOS
-    'socket_blocking' => (bool) env('ROUTEROS_SOCKET_BLOCKING', true),                            // Set blocking mode on a socket stream
+    'attempts'                => (int) env('ROUTEROS_ATTEMPTS', 10),                                      // Count of attempts to establish TCP session
+    'delay'                   => (int) env('ROUTEROS_DELAY', 1),                                          // Delay between attempts in seconds
+    'timeout'                 => (int) env('ROUTEROS_TIMEOUT', 10),                                       // Max timeout for instantiating connection with RouterOS
+    'socket_timeout'          => (int) env('ROUTEROS_SOCKET_TIMEOUT', env('ROUTEROS_TIMEOUT', 30)),       // Max timeout for read from RouterOS
+    'socket_blocking'         => (bool) env('ROUTEROS_SOCKET_BLOCKING', true),                            // Set blocking mode on a socket stream
 
     // @see https://www.php.net/manual/en/context.socket.php
-    'socket_options'  => [
+    'socket_options'          => [
         // Examples:
         // 'bindto' => '192.168.0.100:0',    // connect to the internet using the '192.168.0.100' IP
         // 'bindto' => '192.168.0.100:7000', // connect to the internet using the '192.168.0.100' IP and port '7000'
@@ -61,10 +61,10 @@ return [
      |
      */
 
-    'ssl'         => (bool) env('ROUTEROS_SSL', false), // Enable ssl support (if port is not set this parameter must change default port to ssl port)
+    'ssl'                     => (bool) env('ROUTEROS_SSL', false), // Enable ssl support (if port is not set this parameter must change default port to ssl port)
 
     // @see https://www.php.net/manual/en/context.ssl.php
-    'ssl_options' => [
+    'ssl_options'             => [
         'ciphers'           => env('ROUTEROS_SSL_CIPHERS', 'ADH:ALL'),              // ADH:ALL, ADH:ALL@SECLEVEL=0, ADH:ALL@SECLEVEL=1 ... ADH:ALL@SECLEVEL=5
         'verify_peer'       => (bool) env('ROUTEROS_SSL_VERIFY_PEER', false),       // Require verification of SSL certificate used.
         'verify_peer_name'  => (bool) env('ROUTEROS_SSL_VERIFY_PEER_NAME', false),  // Require verification of peer name.
@@ -81,9 +81,9 @@ return [
      |
      */
 
-    'ssh_port'        => (int) env('ROUTEROS_SSH_PORT', 22),                             // Number of SSH port
-    'ssh_timeout'     => (int) env('ROUTEROS_SSH_TIMEOUT', env('ROUTEROS_TIMEOUT', 30)), // Max timeout for read from RouterOS via SSH proto (for "/export" command)
-    'ssh_private_key' => env('ROUTEROS_SSH_PRIVKEY', '~/.ssh/id_rsa.pub'),               // Full path to required private key
+    'ssh_port'                => (int) env('ROUTEROS_SSH_PORT', 22),                             // Number of SSH port
+    'ssh_timeout'             => (int) env('ROUTEROS_SSH_TIMEOUT', env('ROUTEROS_TIMEOUT', 30)), // Max timeout for read from RouterOS via SSH proto (for "/export" command)
+    'ssh_private_key'         => env('ROUTEROS_SSH_PRIVKEY', '~/.ssh/id_rsa.pub'),               // Full path to required private key
 
     /*
      |--------------------------------------------------------------------------
@@ -95,6 +95,18 @@ return [
      |
      */
 
-    'legacy' => (bool) env('ROUTEROS_LEGACY', false), // Support of legacy login scheme (true - pre 6.43, false - post 6.43)
+    'legacy'                  => (bool) env('ROUTEROS_LEGACY', false), // Support of legacy login scheme (true - pre 6.43, false - post 6.43)
+
+    /*
+     |--------------------------------------------------------------------------
+     | PHP 8.4 Compatibility
+     |--------------------------------------------------------------------------
+     |
+     | If you experience "Stream timed out" errors on PHP 8.4, you can disable
+     | the timeout exception by setting this to false.
+     |
+     */
+
+    'throw_timeout_exception' => (bool) env('ROUTEROS_THROW_TIMEOUT_EXCEPTION', true), // Throw exception on stream timeout
 
 ];

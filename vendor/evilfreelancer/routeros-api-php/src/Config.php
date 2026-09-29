@@ -123,25 +123,32 @@ class Config implements ConfigInterface
     public const SSH_PRIVATE_KEY = '~/.ssh/id_rsa';
 
     /**
+     * By default throw exception on stream timeout
+     * Set to false to disable timeout exception (useful for PHP 8.4 compatibility issues)
+     */
+    public const THROW_TIMEOUT_EXCEPTION = true;
+
+    /**
      * List of allowed parameters of config
      */
     public const ALLOWED = [
-        'host'            => 'string',  // Address of Mikrotik RouterOS
-        'user'            => 'string',  // Username
-        'pass'            => 'string',  // Password
-        'port'            => 'integer', // RouterOS API port number for access (if not set use default or default with SSL if SSL enabled)
-        'ssl'             => 'boolean', // Enable ssl support (if port is not set this parameter must change default port to ssl port)
-        'ssl_options'     => 'array',   // List of SSL options, eg.
-        'legacy'          => 'boolean', // Support of legacy login scheme (true - pre 6.43, false - post 6.43)
-        'timeout'         => 'integer', // Max timeout for instantiating connection with RouterOS
-        'socket_timeout'  => 'integer', // Max timeout for read from RouterOS
-        'socket_blocking' => 'boolean', // Set blocking mode on a socket stream
-        'socket_options'  => 'array',   // List of socket context options
-        'attempts'        => 'integer', // Count of attempts to establish TCP session
-        'delay'           => 'integer', // Delay between attempts in seconds
-        'ssh_port'        => 'integer', // Number of SSH port
-        'ssh_timeout'     => 'integer', // Max timeout for read from RouterOS via SSH proto (for "/export" command)
-        'ssh_private_key' => 'string',  // Max timeout for read from RouterOS via SSH proto (for "/export" command)
+        'host'                    => 'string',  // Address of Mikrotik RouterOS
+        'user'                    => 'string',  // Username
+        'pass'                    => 'string',  // Password
+        'port'                    => 'integer', // RouterOS API port number for access (if not set use default or default with SSL if SSL enabled)
+        'ssl'                     => 'boolean', // Enable ssl support (if port is not set this parameter must change default port to ssl port)
+        'ssl_options'             => 'array',   // List of SSL options, eg.
+        'legacy'                  => 'boolean', // Support of legacy login scheme (true - pre 6.43, false - post 6.43)
+        'timeout'                 => 'integer', // Max timeout for instantiating connection with RouterOS
+        'socket_timeout'          => 'integer', // Max timeout for read from RouterOS
+        'socket_blocking'         => 'boolean', // Set blocking mode on a socket stream
+        'socket_options'          => 'array',   // List of socket context options
+        'attempts'                => 'integer', // Count of attempts to establish TCP session
+        'delay'                   => 'integer', // Delay between attempts in seconds
+        'ssh_port'                => 'integer', // Number of SSH port
+        'ssh_timeout'             => 'integer', // Max timeout for read from RouterOS via SSH proto (for "/export" command)
+        'ssh_private_key'         => 'string',  // Full path to required private key
+        'throw_timeout_exception' => 'boolean', // Throw exception on stream timeout (set false to disable for PHP 8.4 issues)
     ];
 
     /**
@@ -150,18 +157,19 @@ class Config implements ConfigInterface
      * @var array
      */
     private $_parameters = [
-        'legacy'          => self::LEGACY,
-        'ssl'             => self::SSL,
-        'ssl_options'     => self::SSL_OPTIONS,
-        'timeout'         => self::TIMEOUT,
-        'socket_timeout'  => self::SOCKET_TIMEOUT,
-        'socket_blocking' => self::SOCKET_BLOCKING,
-        'socket_options'  => self::SOCKET_OPTIONS,
-        'attempts'        => self::ATTEMPTS,
-        'delay'           => self::ATTEMPTS_DELAY,
-        'ssh_port'        => self::SSH_PORT,
-        'ssh_timeout'     => self::SSH_TIMEOUT,
-        'ssh_private_key' => self::SSH_PRIVATE_KEY,
+        'legacy'                  => self::LEGACY,
+        'ssl'                     => self::SSL,
+        'ssl_options'             => self::SSL_OPTIONS,
+        'timeout'                 => self::TIMEOUT,
+        'socket_timeout'          => self::SOCKET_TIMEOUT,
+        'socket_blocking'         => self::SOCKET_BLOCKING,
+        'socket_options'          => self::SOCKET_OPTIONS,
+        'attempts'                => self::ATTEMPTS,
+        'delay'                   => self::ATTEMPTS_DELAY,
+        'ssh_port'                => self::SSH_PORT,
+        'ssh_timeout'             => self::SSH_TIMEOUT,
+        'ssh_private_key'         => self::SSH_PRIVATE_KEY,
+        'throw_timeout_exception' => self::THROW_TIMEOUT_EXCEPTION,
     ];
 
     /**
