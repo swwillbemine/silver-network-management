@@ -492,9 +492,6 @@ $header_isp_name = htmlspecialchars($isp_name ?? $GLOBALS['isp_name'] ?? 'Silver
     <header class="navbar navbar-expand-md d-none d-lg-flex d-print-none sticky-top" style="z-index: 1030; background: var(--tblr-bg-surface); border-bottom: 1px solid var(--tblr-border-color);">
         <div class="container-xl d-flex align-items-center">
             <div class="collapse navbar-collapse" id="navbar-menu">
-                <span class="navbar-text">
-                    <b><?php echo $header_isp_name; ?></b>
-                </span>
             </div>
             <!-- Navbar brand can go here if needed, but we keep the right side menu -->
             <div class="navbar-nav flex-row order-md-last ms-auto">

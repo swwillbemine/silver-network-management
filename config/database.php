@@ -5,7 +5,7 @@
 $host    = 'localhost';
 $db      = 'silvernet-management';
 $user    = 'root';
-$pass    = '678312';
+$pass    = '';
 $port    = 3306;
 $charset = 'utf8mb4';
 
